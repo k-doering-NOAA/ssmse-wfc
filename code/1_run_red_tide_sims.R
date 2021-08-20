@@ -21,6 +21,8 @@ dir.create(runs_path)
 dir.create(mods_path)
 
 # define the scenarios ----
+#start with just 1 iteration of each
+n_iters <- 1
 # the scenarios are: 
 # three levels of M changes in the OM (none, more frequent, less frequent)
 # 2 different management scenarios
@@ -28,7 +30,7 @@ dir.create(mods_path)
 # metrics: long term avg catch, long term catch variability, long term biomass
 
 scen_red_tide <- c("no-red-tide", "low-red-tide", "hi-red-tide")
-scen_HCR <- c("F-msy", "F-spr-45")
+scen_HCR <- c("F-spr-30", "F-spr-45")
 
 
 scenarios <- data.frame(
@@ -48,10 +50,15 @@ for (i in scen_HCR) {
                                 verbose = FALSE)
   forecast_method <- switch(i, 
                            "F-msy" = 2,
+                           "F-spr-30" = 1,
                            "F-spr-45" = 1)
+  fcast_target <- switch(i, 
+                         "F-msy" = 0.45,
+                         "F-spr-30" = 0.3,
+                         "F-spr-45" = 0.45)
   # manipulate the forecasting file.
   fore$MSY <- 2 # calculate Fmsy, needed for F-msy scenario
-  fore$SPRtarget <- 0.45 # needed for F-spr-45 scenario
+  fore$SPRtarget <- fcast_target # differs between scenarios
   fore$Forecast <- forecast_method # differs between scenarios 
   fore$ControlRuleMethod <- 0 # don't use a ramp HCR at all
   r4ss::SS_writeforecast(fore, tmp_cod_path, verbose = FALSE, overwrite = TRUE)
@@ -62,7 +69,7 @@ for (i in scen_HCR) {
 # Set this up for the 3 different operating mode scenarios
 # in all cases, we want to use random fluctuations on selectivity
 # changing M depends on the scenario.
-#TODO: set this up.
+
 
 # put together the change for selectivity (random values around the orig val, with
 # an sd of 0.2)
@@ -80,23 +87,34 @@ template_custom_change <- create_future_om_list(example_type = "custom")
 
 mod_change_M <- template_custom_change[[1]]
 
-#start with just 1 iteration of each
-M_no_scen <- rep(0.2, 50)
-M_low_scen <- rep(c(0.2, 0.2, 0.2, 0.2, 0.3), length.out = 50)
-M_hi_scen <- rep(c(0.2, 0.2, 0.2, 0.2, 0.4), length.out = 50)
+
+M_no_scen <- rep(rep(0.2, 50), times = niters)
+M_low_scen <- rep(rep(c(0.2, 0.2, 0.2, 0.2, 0.3), length.out = 50), times = niters)
+M_hi_scen <- rep(rep(c(0.2, 0.2, 0.2, 0.2, 0.4), length.out = 50), times = niters)
 M_custom_dataframe <- data.frame(
   par = "NatM_p_1_Fem_GP_1", 
-  scen = rep(scenarios$scen_name, times = rep(50*10, 6)), 
-  iter = rep(rep(1:10, times = rep(50, 10)), times = 6), 
-  yr = rep(101:150, times = 6*10), 
+  scen = rep(scenarios$scen_name, times = rep(50*niters, 6)), 
+  iter = rep(rep(1:10, times = rep(50, niters)), times = 6), 
+  yr = rep(101:150, times = 6*niters), 
   value = c(M_no_scen, M_low_scen, M_hi_scen,
             M_no_scen, M_low_scen, M_hi_scen))
 mod_change_M$pars <- "NatM_p_1_Fem_GP_1"
 mod_change_M$scen <- c("replicate", "all")
 mod_change_M$input <- M_custom_dataframe
 
+# add recruitment deviations
+rec_dev_specify <- template_custom_change[[1]]
+rec_dev_specify$pars <- "rec_devs"
+rec_dev_specify$scen <- c("replicate", "all")
+rec_dev_specify$input$first_yr_averaging <- 1
+rec_dev_specify$input$last_yr_averaging <- 100
+last_yr_orig_val <- 100
+first_yr_final_val <- 101
+ts_param <- sd
+value <- NA
+
 # put together a complete list
-future_om_list <- list(mod_change_M, mod_change_sel)
+future_om_list <- list(mod_change_M, mod_change_sel, rec_dev_specify)
 
 # get the sampling scheme ----
 # use the historical sampling scheme, so don' t need to create one
@@ -124,7 +142,7 @@ sample_struct_list <- list(sample_struct,
 # call SSSMSE ----
 out <- SSMSE::run_SSMSE(out_dir_scen_vec = rep("model_runs", 6),
                         scen_name_vec = scenarios$scen_name,
-                        iter_vec = rep(10, 6),
+                        iter_vec = c(rep(niters, 6)),
                         OM_name_vec = rep("cod", 6),
                         OM_in_dir_vec = NULL,
                         EM_in_dir_vec = scenarios$EM_path,
@@ -146,6 +164,9 @@ summary <- SSMSE::SSMSE_summary_all(dir = "model_runs")
 # summary <- list()
 # summary$ts <- read.csv("model_runs/ss3sim_ts.csv")
 # summary$scalar <- read.csv("model_runs/ss3sim_scalar.csv")
+# 
+# #check for errored iterations
+# lapply(out, function(x) x$errored_iterations)
 
 SSB_df <- check_convergence(summary, n_EMs = 6, max_yr = 150)
 
