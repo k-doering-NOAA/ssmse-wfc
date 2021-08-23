@@ -2,7 +2,7 @@
 
 # load pkgs set options ----
 #devtools::install_github("r4ss/r4ss", ref = "64b9e62")
-#devtools::install_github("nmfs-fish-tools/SSMSE", ref = "fca696a")
+#devtools::install_github("nmfs-fish-tools/SSMSE", ref = "db43ab4")
 library(SSMSE)
 library(r4ss)
 library(dplyr)
@@ -21,8 +21,7 @@ dir.create(runs_path)
 dir.create(mods_path)
 
 # define the scenarios ----
-#start with just 1 iteration of each
-n_iters <- 1
+niters <- 10
 # the scenarios are: 
 # three levels of M changes in the OM (none, more frequent, less frequent)
 # 2 different management scenarios
@@ -31,7 +30,6 @@ n_iters <- 1
 
 scen_red_tide <- c("no-red-tide", "low-red-tide", "hi-red-tide")
 scen_HCR <- c("F-spr-30", "F-spr-45")
-
 
 scenarios <- data.frame(
   scen_name = c(paste0(scen_red_tide, "-",scen_HCR[1]),
@@ -94,7 +92,7 @@ M_hi_scen <- rep(rep(c(0.2, 0.2, 0.2, 0.2, 0.4), length.out = 50), times = niter
 M_custom_dataframe <- data.frame(
   par = "NatM_p_1_Fem_GP_1", 
   scen = rep(scenarios$scen_name, times = rep(50*niters, 6)), 
-  iter = rep(rep(1:10, times = rep(50, niters)), times = 6), 
+  iter = rep(rep(seq_len(niters), times = rep(50, niters)), times = 6), 
   yr = rep(101:150, times = 6*niters), 
   value = c(M_no_scen, M_low_scen, M_hi_scen,
             M_no_scen, M_low_scen, M_hi_scen))
@@ -103,15 +101,15 @@ mod_change_M$scen <- c("replicate", "all")
 mod_change_M$input <- M_custom_dataframe
 
 # add recruitment deviations
-rec_dev_specify <- template_custom_change[[1]]
+rec_dev_specify <- template_mod_change[[1]]
 rec_dev_specify$pars <- "rec_devs"
 rec_dev_specify$scen <- c("replicate", "all")
-rec_dev_specify$input$first_yr_averaging <- 1
-rec_dev_specify$input$last_yr_averaging <- 100
-last_yr_orig_val <- 100
-first_yr_final_val <- 101
-ts_param <- sd
-value <- NA
+# rec_dev_specify$input$first_yr_averaging <- 1
+# rec_dev_specify$input$last_yr_averaging <- 100
+rec_dev_specify$input$last_yr_orig_val <- 100
+rec_dev_specify$input$first_yr_final_val <- 101
+rec_dev_specify$input$ts_param <- "sd"
+rec_dev_specify$input$value <- 0.1
 
 # put together a complete list
 future_om_list <- list(mod_change_M, mod_change_sel, rec_dev_specify)
@@ -142,7 +140,7 @@ sample_struct_list <- list(sample_struct,
 # call SSSMSE ----
 out <- SSMSE::run_SSMSE(out_dir_scen_vec = rep("model_runs", 6),
                         scen_name_vec = scenarios$scen_name,
-                        iter_vec = c(rep(niters, 6)),
+                        iter_vec = rep(niters, 6),
                         OM_name_vec = rep("cod", 6),
                         OM_in_dir_vec = NULL,
                         EM_in_dir_vec = scenarios$EM_path,
@@ -155,8 +153,10 @@ out <- SSMSE::run_SSMSE(out_dir_scen_vec = rep("model_runs", 6),
                         future_om_list = future_om_list,
                         verbose = FALSE,
                         seed = 123,
-                        run_parallel = TRUE
+                        run_parallel = TRUE,
+                        
                         )
+saveRDS(out, file = file.path("model_runs", "run_SSMSE_out_23Aug2021.rda"))
 # 
 # # look at results ----
 summary <- SSMSE::SSMSE_summary_all(dir = "model_runs")
@@ -192,7 +192,7 @@ all_metrics <- full_join(OM_metrics, SSB_avg)
 all_metrics_long <- tidyr::gather(all_metrics, "metric", "value", 3:5)
 all_metrics_long$value_bils <- all_metrics_long$value/1000000000
 all_metrics_long$scen_fac <- factor(all_metrics_long$scenario,
-                                    levels = c("no-red-tide-F-msy", "low-red-tide-F-msy", "hi-red-tide-F-msy",
+                                    levels = c("no-red-tide-F-spr-30", "low-red-tide-F-spr-30", "hi-red-tide-F-spr-30",
                                                "no-red-tide-F-spr-45", "low-red-tide-F-spr-45", "hi-red-tide-F-spr-45" ),
                                     labels = c("no", "low", "high", "no", "low", "high"))
 
@@ -245,7 +245,7 @@ for (i in scenarios$scen_name) { # scenarios$scen_name to make general
   catch_cv_df <- rbind(catch_cv_df, tmp_df)
 }
 catch_cv_df$scen_fac <- factor(catch_cv_df$scenario,
-                               levels = c("no-red-tide-F-msy", "low-red-tide-F-msy", "hi-red-tide-F-msy",
+                               levels = c("no-red-tide-F-spr-30", "low-red-tide-F-spr-30", "hi-red-tide-F-spr-30",
                                           "no-red-tide-F-spr-45", "low-red-tide-F-spr-45", "hi-red-tide-F-spr-45"),
                                labels = c("no", "low", "high", "no", "low", "high"))
 catch_cv_df <- catch_cv_df %>%
