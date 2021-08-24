@@ -22,6 +22,8 @@ dir.create(mods_path)
 
 # define the scenarios ----
 niters <- 10
+start_iters <- 11
+
 # the scenarios are: 
 # three levels of M changes in the OM (none, more frequent, less frequent)
 # 2 different management scenarios
@@ -39,30 +41,32 @@ scenarios <- data.frame(
 
 # manipulate EM Forecasting ----
 # no need to re-run model for the EM, 
-for (i in scen_HCR) {
-  tmp_cod_path <- file.path(mods_path, i)
-  file.copy(from = cod_mod_path, to = mods_path, recursive = TRUE)
-  file.rename(from = file.path(mods_path, "cod"), to = tmp_cod_path)
-
-  fore <- r4ss::SS_readforecast(file.path(tmp_cod_path, "forecast.ss"), 
-                                verbose = FALSE)
-  forecast_method <- switch(i, 
-                           "F-msy" = 2,
-                           "F-spr-30" = 1,
-                           "F-spr-45" = 1)
-  fcast_target <- switch(i, 
-                         "F-msy" = 0.45,
-                         "F-spr-30" = 0.3,
-                         "F-spr-45" = 0.45)
-  # manipulate the forecasting file.
-  fore$MSY <- 2 # calculate Fmsy, needed for F-msy scenario
-  fore$SPRtarget <- fcast_target # differs between scenarios
-  fore$Forecast <- forecast_method # differs between scenarios 
-  fore$ControlRuleMethod <- 0 # don't use a ramp HCR at all
-  r4ss::SS_writeforecast(fore, tmp_cod_path, verbose = FALSE, overwrite = TRUE)
-  file.remove(file.path(tmp_cod_path, "forecast.ss_new")) # to make sure it is not used.
+if(start_iters == 1) {
+  # dont need to re run this for each new set of runs
+  for (i in scen_HCR) {
+    tmp_cod_path <- file.path(mods_path, i)
+    file.copy(from = cod_mod_path, to = mods_path, recursive = TRUE)
+    file.rename(from = file.path(mods_path, "cod"), to = tmp_cod_path)
+  
+    fore <- r4ss::SS_readforecast(file.path(tmp_cod_path, "forecast.ss"), 
+                                  verbose = FALSE)
+    forecast_method <- switch(i, 
+                             "F-msy" = 2,
+                             "F-spr-30" = 1,
+                             "F-spr-45" = 1)
+    fcast_target <- switch(i, 
+                           "F-msy" = 0.45,
+                           "F-spr-30" = 0.3,
+                           "F-spr-45" = 0.45)
+    # manipulate the forecasting file.
+    fore$MSY <- 2 # calculate Fmsy, needed for F-msy scenario
+    fore$SPRtarget <- fcast_target # differs between scenarios
+    fore$Forecast <- forecast_method # differs between scenarios 
+    fore$ControlRuleMethod <- 0 # don't use a ramp HCR at all
+    r4ss::SS_writeforecast(fore, tmp_cod_path, verbose = FALSE, overwrite = TRUE)
+    file.remove(file.path(tmp_cod_path, "forecast.ss_new")) # to make sure it is not used.
+  }
 }
-
 # set up the future om deviations ----
 # Set this up for the 3 different operating mode scenarios
 # in all cases, we want to use random fluctuations on selectivity
@@ -92,7 +96,7 @@ M_hi_scen <- rep(rep(c(0.2, 0.2, 0.2, 0.2, 0.4), length.out = 50), times = niter
 M_custom_dataframe <- data.frame(
   par = "NatM_p_1_Fem_GP_1", 
   scen = rep(scenarios$scen_name, times = rep(50*niters, 6)), 
-  iter = rep(rep(seq_len(niters), times = rep(50, niters)), times = 6), 
+  iter = rep(rep(seq(from = start_iters, to = start_iters + niters - 1), times = rep(50, niters)), times = 6), 
   yr = rep(101:150, times = 6*niters), 
   value = c(M_no_scen, M_low_scen, M_hi_scen,
             M_no_scen, M_low_scen, M_hi_scen))
@@ -152,11 +156,11 @@ out <- SSMSE::run_SSMSE(out_dir_scen_vec = rep("model_runs", 6),
                         sample_struct_list = sample_struct_list,
                         future_om_list = future_om_list,
                         verbose = FALSE,
-                        seed = 123,
+                        seed = 456, # changing each time a chunk of runs is done will help ensure there is stochacisity 
                         run_parallel = TRUE,
-                        
+                        n_cores = 5
                         )
-saveRDS(out, file = file.path("model_runs", "run_SSMSE_out_23Aug2021.rda"))
+saveRDS(out, file = file.path("model_runs", "run_SSMSE_out_24Aug2021.rda"))
 # 
 # # look at results ----
 summary <- SSMSE::SSMSE_summary_all(dir = "model_runs")
@@ -218,7 +222,7 @@ plots <- lapply(metrics, function(i, all_metrics_long) {
     geom_violin(draw_quantiles = 0.5, aes(fill = HCR)) +
     scale_y_continuous(limits = c(0, NA))+
     scale_fill_brewer(palette = "Set2", direction = -1)+
-    labs(title = title_lab, x = "OM selectivity", y = yaxis_lab) +
+    labs(title = title_lab, x = "OM M pulses", y = yaxis_lab) +
     theme_classic(base_size = 22)
   plot
 }, all_metrics_long = all_metrics_long)
@@ -259,7 +263,7 @@ plot_cv <- ggplot(data = catch_cv_df, aes(x = scen_fac, y = catch_cv)) +
   scale_y_continuous(limits = c(0, NA)) +
   scale_fill_brewer(palette = "Set2", direction = -1)+
   labs(title = "Long-term catch variability (years 126-150)",
-       x = "OM selectivity", y = "coefficient of variation") +
+       x = "OM M pulses", y = "coefficient of variation") +
   theme_classic(base_size = 22)
 ggsave(file.path("figures", paste0("run_sel_btarget_scens_", "catch_CV", ".png")),
        width = 8, height = 6, units = "in", device = "png")
