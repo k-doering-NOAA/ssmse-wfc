@@ -5,8 +5,7 @@
 #devtools::install_github("nmfs-fish-tools/SSMSE", ref = "db43ab4")
 library(SSMSE)
 library(r4ss)
-library(dplyr)
-library(ggplot2)
+
 # functions for convergence and performance metrics, get from other gh repo
 source("https://raw.githubusercontent.com/k-doering-NOAA/ssmse-afs/master/code/get_metrics.R")
 
@@ -21,8 +20,8 @@ dir.create(runs_path)
 dir.create(mods_path)
 
 # define the scenarios ----
-niters <- 10
-start_iters <- 11
+niters <- 30
+start_iters <- 21
 
 # the scenarios are: 
 # three levels of M changes in the OM (none, more frequent, less frequent)
@@ -158,112 +157,11 @@ out <- SSMSE::run_SSMSE(out_dir_scen_vec = rep("model_runs", 6),
                         verbose = FALSE,
                         seed = 456, # changing each time a chunk of runs is done will help ensure there is stochacisity 
                         run_parallel = TRUE,
-                        n_cores = 5
+                        n_cores = 6
                         )
-saveRDS(out, file = file.path("model_runs", "run_SSMSE_out_24Aug2021.rda"))
+saveRDS(out, file = file.path("model_runs", "run_SSMSE_out_25Aug2021.rda"))
 # 
 # # look at results ----
-summary <- SSMSE::SSMSE_summary_all(dir = "model_runs")
-# 
-# summary <- list()
-# summary$ts <- read.csv("model_runs/ss3sim_ts.csv")
-# summary$scalar <- read.csv("model_runs/ss3sim_scalar.csv")
-# 
+summary <- SSMSE::SSMSE_summary_all(dir = "model_runs", run_parallel = TRUE)
 # #check for errored iterations
-# lapply(out, function(x) x$errored_iterations)
-
-SSB_df <- check_convergence(summary, n_EMs = 6, max_yr = 150)
-
-# calculate performance metrics ----
-# look at catch in OM from yrs 125:150
-OM_metrics <- NULL
-for (i in scenarios$scen_name) { # scenarios$scen_name to make general
-
-  iterations <- list.dirs(file.path("model_runs", i), recursive = FALSE, full.names = FALSE)
-  OM_name <- grep("_OM$",
-                  list.dirs(file.path("model_runs", i, iterations[1]), full.names = FALSE),
-                  value = TRUE)
-  OM_dat <- file.path("model_runs", i, iterations, OM_name, "ss3.dat")
-  avg_catch <- unlist(lapply(OM_dat, function(x) get_avg_catch(x, yrs = 126:150)))
-  catch_sd <- unlist(lapply(OM_dat, function(x) get_catch_sd(x, yrs = 126:150)))
-  tmp_df <- data.frame(iteration = as.integer(iterations), scenario = i,
-                       avg_catch = avg_catch, catch_sd = catch_sd)
-  OM_metrics <- rbind(OM_metrics, tmp_df)
-}
-SSB_avg <- get_SSB_avg(summary, min_yr = 126, max_yr = 150)
-
-all_metrics <- full_join(OM_metrics, SSB_avg)
-all_metrics_long <- tidyr::gather(all_metrics, "metric", "value", 3:5)
-all_metrics_long$value_bils <- all_metrics_long$value/1000000000
-all_metrics_long$scen_fac <- factor(all_metrics_long$scenario,
-                                    levels = c("no-red-tide-F-spr-30", "low-red-tide-F-spr-30", "hi-red-tide-F-spr-30",
-                                               "no-red-tide-F-spr-45", "low-red-tide-F-spr-45", "hi-red-tide-F-spr-45" ),
-                                    labels = c("no", "low", "high", "no", "low", "high"))
-
-all_metrics_long <- all_metrics_long %>%
-  tidyr::separate(col = scenario,
-                  into = c("OM_scen", "HCR"),
-                  sep = "-F-",
-                  remove = FALSE)
-
-metrics <- unique(all_metrics_long$metric)
-
-plots <- lapply(metrics, function(i, all_metrics_long) {
-  title_lab <- switch(i,
-                      avg_catch = "Long-term average catch (years 126-150)",
-                      avg_SSB = "Long-term average SSB (years 126-150)",
-                      catch_sd = "Long-term catch variability (years 126-150)")
-  yaxis_lab <- switch(i,
-                      avg_catch = "Catch (billion metric tons)",
-                      avg_SSB = "Biomass (billion metric tons)",
-                      catch_sd = "Catch (billion metric tons)")
-  plot <- ggplot(data = all_metrics_long[all_metrics_long$metric == i, ],
-                 aes(x = scen_fac, y = value_bils)) +
-    geom_violin(draw_quantiles = 0.5, aes(fill = HCR)) +
-    scale_y_continuous(limits = c(0, NA))+
-    scale_fill_brewer(palette = "Set2", direction = -1)+
-    labs(title = title_lab, x = "OM M pulses", y = yaxis_lab) +
-    theme_classic(base_size = 22)
-  plot
-}, all_metrics_long = all_metrics_long)
-
-for (i in seq_len(length(plots))) {
-  ggsave(file.path("figures", paste0("run_red_tide_scens_", metrics[i], ".png")),
-         plot = plots[[i]], width = 8, height = 6, units = "in", device = "png")
-}
-
-
-# get cv catch ----
-
-catch_cv_df <- NULL
-for (i in scenarios$scen_name) { # scenarios$scen_name to make general
-
-  iterations <- list.dirs(file.path("model_runs", i), recursive = FALSE, full.names = FALSE)
-  OM_name <- grep("_OM$",
-                  list.dirs(file.path("model_runs", i, iterations[1]), full.names = FALSE),
-                  value = TRUE)
-  OM_dat <- file.path("model_runs", i, iterations, OM_name, "ss3.dat")
-  catch_cv <- unlist(lapply(OM_dat, function(x) get_catch_cv(x, yrs = 126:150)))
-  tmp_df <- data.frame(iteration = as.integer(iterations), scenario = i,
-                       catch_cv = catch_cv)
-  catch_cv_df <- rbind(catch_cv_df, tmp_df)
-}
-catch_cv_df$scen_fac <- factor(catch_cv_df$scenario,
-                               levels = c("no-red-tide-F-spr-30", "low-red-tide-F-spr-30", "hi-red-tide-F-spr-30",
-                                          "no-red-tide-F-spr-45", "low-red-tide-F-spr-45", "hi-red-tide-F-spr-45"),
-                               labels = c("no", "low", "high", "no", "low", "high"))
-catch_cv_df <- catch_cv_df %>%
-  tidyr::separate(col = scenario,
-                  into = c("OM_scen", "HCR"),
-                  sep = "-F-",
-                  remove = FALSE)
-
-plot_cv <- ggplot(data = catch_cv_df, aes(x = scen_fac, y = catch_cv)) +
-  geom_violin(draw_quantiles = 0.5, aes(fill = HCR)) +
-  scale_y_continuous(limits = c(0, NA)) +
-  scale_fill_brewer(palette = "Set2", direction = -1)+
-  labs(title = "Long-term catch variability (years 126-150)",
-       x = "OM M pulses", y = "coefficient of variation") +
-  theme_classic(base_size = 22)
-ggsave(file.path("figures", paste0("run_sel_btarget_scens_", "catch_CV", ".png")),
-       width = 8, height = 6, units = "in", device = "png")
+lapply(out, function(x) x$errored_iterations)
