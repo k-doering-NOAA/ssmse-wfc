@@ -1,3 +1,5 @@
+# Look at results from all runs (50 each iter) ----
+
 # Load packages set options ----
 
 library(SSMSE)
@@ -6,12 +8,26 @@ library(dplyr)
 library(ggplot2)
 # functions for convergence and performance metrics, get from other gh repo
 source("https://raw.githubusercontent.com/k-doering-NOAA/ssmse-afs/master/code/get_metrics.R")
+# path names ----
+mods_path <- "input_models"
+
 # read in summaries ----
 
 summary <- vector(mode = "list", length = 2)
 summary[[1]] <- read.csv("model_runs/SSMSE_ts.csv")
 summary[[2]] <- read.csv("model_runs/SSMSE_scalar.csv")
 names(summary) <- c("ts", "scalar")
+
+
+# define the scenarios ----
+scen_red_tide <- c("no-red-tide", "low-red-tide", "hi-red-tide")
+scen_HCR <- c("F-spr-30", "F-spr-45")
+
+scenarios <- data.frame(
+  scen_name = c(paste0(scen_red_tide, "-",scen_HCR[1]),
+                paste0(scen_red_tide, "-", scen_HCR[2])),
+  EM_path = rep(c(file.path(mods_path, scen_HCR)), times = c(3,3))
+)
 
 ## check convergence ----
 
