@@ -72,15 +72,19 @@ metrics <- unique(all_metrics_long$metric)
 
 plots <- lapply(metrics, function(i, all_metrics_long) {
   title_lab <- switch(i,
-                      avg_catch = "Long-term average catch (years 126-150)",
-                      avg_SSB = "Long-term average SSB (years 126-150)",
-                      catch_sd = "Long-term catch variability (years 126-150)")
+                      avg_catch = "Long-term average catch",
+                      avg_SSB = "Long-term average SSB",
+                      catch_sd = "Long-term catch variability")
   yaxis_lab <- switch(i,
                       avg_catch = "Catch (billion metric tons)",
                       avg_SSB = "Biomass (billion metric tons)",
                       catch_sd = "Catch (billion metric tons)")
   plot <- ggplot(data = all_metrics_long[all_metrics_long$metric == i, ],
-                 aes(x = scen_fac, y = value_bils)) +
+                 aes(x = scen_fac, y = value_bils)) 
+  if(i == "avg_SSB") {
+    plot <- plot + geom_hline(yintercept = 1342470000/1000000000)
+  }
+  plot <- plot +
     geom_violin(draw_quantiles = 0.5, aes(fill = HCR)) +
     scale_y_continuous(limits = c(0, NA))+
     scale_fill_brewer(palette = "Set2", direction = -1)+
