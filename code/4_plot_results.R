@@ -64,7 +64,7 @@ all_metrics_long$scen_fac <- factor(all_metrics_long$scenario,
 
 all_metrics_long <- all_metrics_long %>%
   tidyr::separate(col = scenario,
-                  into = c("OM_scen", "HCR"),
+                  into = c("OM_scen", "MP"),
                   sep = "-F-",
                   remove = FALSE)
 
@@ -85,7 +85,7 @@ plots <- lapply(metrics, function(i, all_metrics_long) {
     plot <- plot + geom_hline(yintercept = 1342470000/1000000000)
   }
   plot <- plot +
-    geom_violin(draw_quantiles = 0.5, aes(fill = HCR)) +
+    geom_violin(draw_quantiles = 0.5, aes(fill = MP)) +
     scale_y_continuous(limits = c(0, NA))+
     scale_fill_brewer(palette = "Set2", direction = -1)+
     labs(title = title_lab, x = "OM M pulses", y = yaxis_lab) +
@@ -120,12 +120,12 @@ catch_cv_df$scen_fac <- factor(catch_cv_df$scenario,
                                labels = c("no", "low", "high", "no", "low", "high"))
 catch_cv_df <- catch_cv_df %>%
   tidyr::separate(col = scenario,
-                  into = c("OM_scen", "HCR"),
+                  into = c("OM_scen", "MP"),
                   sep = "-F-",
                   remove = FALSE)
 
 plot_cv <- ggplot(data = catch_cv_df, aes(x = scen_fac, y = catch_cv)) +
-  geom_violin(draw_quantiles = 0.5, aes(fill = HCR)) +
+  geom_violin(draw_quantiles = 0.5, aes(fill = MP)) +
   scale_y_continuous(limits = c(0, NA)) +
   scale_fill_brewer(palette = "Set2", direction = -1)+
   labs(title = "Long-term catch variability (years 126-150)",
