@@ -128,7 +128,7 @@ plot_cv <- ggplot(data = catch_cv_df, aes(x = scen_fac, y = catch_cv)) +
   geom_violin(draw_quantiles = 0.5, aes(fill = MP)) +
   scale_y_continuous(limits = c(0, NA)) +
   scale_fill_brewer(palette = "Set2", direction = -1)+
-  labs(title = "Long-term catch variability (years 126-150)",
+  labs(title = "Long-term catch variability",
        x = "OM M pulses", y = "coefficient of variation") +
   theme_classic(base_size = 22)
 ggsave(file.path("figures", paste0("run_sel_btarget_scens_", "catch_CV", ".png")),
