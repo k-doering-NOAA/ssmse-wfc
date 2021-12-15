@@ -107,12 +107,12 @@ mod_change_M$input <- M_custom_dataframe
 rec_dev_specify <- template_mod_change[[1]]
 rec_dev_specify$pars <- "rec_devs"
 rec_dev_specify$scen <- c("replicate", "all")
-# rec_dev_specify$input$first_yr_averaging <- 1
-# rec_dev_specify$input$last_yr_averaging <- 100
+rec_dev_specify$input$first_yr_averaging <- 1 # use same sd as from the orig model.
+rec_dev_specify$input$last_yr_averaging <- 100
 rec_dev_specify$input$last_yr_orig_val <- 100
 rec_dev_specify$input$first_yr_final_val <- 101
 rec_dev_specify$input$ts_param <- "sd"
-rec_dev_specify$input$value <- 0.1
+rec_dev_specify$input$value <- NA
 
 # put together a complete list
 future_om_list <- list(mod_change_M, mod_change_sel, rec_dev_specify)

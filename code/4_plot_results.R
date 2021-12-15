@@ -34,7 +34,8 @@ scenarios <- data.frame(
 SSB_df <- check_convergence(summary, n_EMs = 6, max_yr = 150)
 # no params on bounds, there are some relatively low or high SSB's, but they
 # werent so far off that I thought the runs should be excluded
-
+summary(summary$scalar$max_grad) # make sure there aren't any crazy high (say,
+# greater than 2 max gradients)
 
 # calculate performance metrics ----
 # look at catch in OM from yrs 125:150
