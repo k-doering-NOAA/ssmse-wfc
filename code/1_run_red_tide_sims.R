@@ -1,8 +1,8 @@
 # Run scenarios relating to q 
 
 # load pkgs set options ----
-#devtools::install_github("r4ss/r4ss", ref = "64b9e62")
-#devtools::install_github("nmfs-fish-tools/SSMSE", ref = "db43ab4")
+#devtools::install_github("r4ss/r4ss", ref = "155a521")
+#devtools::install_github("nmfs-fish-tools/SSMSE@v0.2.5")
 library(SSMSE)
 library(r4ss)
 
@@ -20,8 +20,8 @@ dir.create(runs_path)
 dir.create(mods_path)
 
 # define the scenarios ----
-niters <- 30
-start_iters <- 21
+niters <- 2
+start_iters <- 1
 
 # the scenarios are: 
 # three levels of M changes in the OM (none, more frequent, less frequent)
@@ -159,7 +159,7 @@ out <- SSMSE::run_SSMSE(out_dir_scen_vec = rep("model_runs", 6),
                         run_parallel = TRUE,
                         n_cores = 6
                         )
-saveRDS(out, file = file.path("model_runs", "run_SSMSE_out_25Aug2021.rda"))
+saveRDS(out, file = file.path("model_runs", "run_SSMSE_out_15Dec2021.rda"))
 # 
 # # look at results ----
 summary <- SSMSE::SSMSE_summary_all(dir = "model_runs", run_parallel = TRUE)
