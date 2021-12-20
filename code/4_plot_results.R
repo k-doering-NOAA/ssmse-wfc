@@ -6,6 +6,7 @@ library(SSMSE)
 library(r4ss)
 library(dplyr)
 library(ggplot2)
+library(patchwork)
 # functions for convergence and performance metrics, get from other gh repo
 source("https://raw.githubusercontent.com/k-doering-NOAA/ssmse-afs/master/code/get_metrics.R")
 # path names ----
@@ -18,6 +19,10 @@ summary[[1]] <- read.csv("model_runs/SSMSE_ts.csv")
 summary[[2]] <- read.csv("model_runs/SSMSE_scalar.csv")
 names(summary) <- c("ts", "scalar")
 
+# read in the output file -----
+out <- readRDS("model_runs/run_SSMSE_out_15Dec2021.rda")
+
+
 
 # define the scenarios ----
 scen_red_tide <- c("no-red-tide", "low-red-tide", "hi-red-tide")
@@ -29,20 +34,63 @@ scenarios <- data.frame(
   EM_path = rep(c(file.path(mods_path, scen_HCR)), times = c(3,3))
 )
 
+# get the files that had issuse running ----
+
+error_mods <- lapply(out, function(x) {
+  tmp <- x$errored_iterations
+  if(isTRUE(tmp == "No errored iterations")) {
+    tmp <- NULL
+  }
+  tmp
+}
+)
+
+error_mods_df <- do.call(bind_rows, error_mods)
+error_mods_key <- error_mods_df[,c("iteration", "scenario")]
+
+# remove the models with issues
+
+summary$ts <- dplyr::anti_join(summary$ts, error_mods_key)
+summary$scalar <- dplyr::anti_join(summary$scalar, error_mods_key)
+
 ## check convergence ----
+# also add a check for max_grad
+check_scalar <- summary$scalar[,c("max_grad", "iteration", "scenario")]# make sure there aren't any crazy high (say,
+too_high_max_grad_key <- na.omit(summary$scalar[summary$scalar$max_grad>2, c("iteration", "scenario")])
+# greater than 2 max gradients)
+summary$ts <- dplyr::anti_join(summary$ts, too_high_max_grad_key)
+summary$scalar <- dplyr::anti_join(summary$scalar, too_high_max_grad_key)
+
 
 SSB_df <- check_convergence(summary, n_EMs = 6, max_yr = 150)
-# no params on bounds, there are some relatively low or high SSB's, but they
-# werent so far off that I thought the runs should be excluded
-summary(summary$scalar$max_grad) # make sure there aren't any crazy high (say,
-# greater than 2 max gradients)
+summary(SSB_df$SSB_ratio)
+# There is a bit of a spread, but I'm not exactly sure if 4 x different (or
+# slightly less than half) isn't realistic. Will retain these values
 
+SSB_df# no params on bounds, there are some relatively low or high SSB's.
+
+# how many iterations per scenario are left? 
+
+n_iters_per_scen <- summary$scalar[summary$scalar$model_run == "cod_OM", c("iteration", "scenario")] %>% 
+  group_by(scenario) %>% 
+  summarize(n = n())
+write.csv(n_iters_per_scen, "model_runs/n_iter_per_scen.csv")
+
+# write problem scenarios to afile
+write.csv(too_high_max_grad_key, "model_runs/too_high_max_grad.csv")
+write.csv(error_mods_key, "model_runs/error_mods_key.csv")
+
+all_errors <- rbind(too_high_max_grad_key, error_mods_key)
 # calculate performance metrics ----
 # look at catch in OM from yrs 125:150
 OM_metrics <- NULL
 for (i in scenarios$scen_name) { # scenarios$scen_name to make general
   
   iterations <- list.dirs(file.path("model_runs", i), recursive = FALSE, full.names = FALSE)
+  # remove iterations that had errors/convergence issues
+  test_df <- data.frame( iteration = as.double(iterations), scenario = i)
+  test_df <- dplyr::anti_join(test_df, all_errors)
+  iterations <- as.character(as.integer(test_df$iteration))
   OM_name <- grep("_OM$",
                   list.dirs(file.path("model_runs", i, iterations[1]), full.names = FALSE),
                   value = TRUE)
@@ -106,6 +154,9 @@ catch_cv_df <- NULL
 for (i in scenarios$scen_name) { # scenarios$scen_name to make general
   
   iterations <- list.dirs(file.path("model_runs", i), recursive = FALSE, full.names = FALSE)
+  test_df <- data.frame( iteration = as.double(iterations), scenario = i)
+  test_df <- dplyr::anti_join(test_df, all_errors)
+  iterations <- as.character(as.integer(test_df$iteration))
   OM_name <- grep("_OM$",
                   list.dirs(file.path("model_runs", i, iterations[1]), full.names = FALSE),
                   value = TRUE)
@@ -134,3 +185,9 @@ plot_cv <- ggplot(data = catch_cv_df, aes(x = scen_fac, y = catch_cv)) +
   theme_classic(base_size = 22)
 ggsave(file.path("figures", paste0("run_sel_btarget_scens_", "catch_CV", ".png")),
        width = 8, height = 6, units = "in", device = "png")
+
+plots_no_legend <- lapply(plots, function(x) x + theme(legend.position = "none"))
+patchwork_plot <- (plots_no_legend[[1]]+ plot_cv) / (plots_no_legend[[3]] + plots_no_legend[[2]])
+
+
+ggsave("figures/run_red_tide_scens_perf_metrics.png", patchwork_plot, width = 6*2.5, height = 4*2.5, units = "in")
