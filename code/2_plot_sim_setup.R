@@ -14,6 +14,7 @@ ggplot(M_vals, aes(x = Year, y = M)) +
   geom_line(aes(color = pattern, linetype = pattern))+
   #geom_point(aes(color = pattern)) +
   scale_color_nmfs(palette = "regional web")+
+  ggplot2::ylim(0, 0.4)+
   theme_classic()
 ggsave("figures/M.png", width = 6, height = 4, units = "in")
 
