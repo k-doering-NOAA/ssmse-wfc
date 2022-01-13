@@ -1,4 +1,4 @@
-# Look at results from all runs (50 each iter) ----
+# Look at results from all runs (100 each iter) ----
 
 # Load packages set options ----
 
@@ -97,14 +97,15 @@ for (i in scenarios$scen_name) { # scenarios$scen_name to make general
   OM_dat <- file.path("model_runs", i, iterations, OM_name, "ss3.dat")
   avg_catch <- unlist(lapply(OM_dat, function(x) get_avg_catch(x, yrs = 126:150)))
   catch_sd <- unlist(lapply(OM_dat, function(x) get_catch_sd(x, yrs = 126:150)))
+  short_term_catch <- unlist(lapply(OM_dat, function (x) get_avg_catch(x, yrs = 101:110)))
   tmp_df <- data.frame(iteration = as.integer(iterations), scenario = i,
-                       avg_catch = avg_catch, catch_sd = catch_sd)
+                       avg_catch = avg_catch, catch_sd = catch_sd, short_term_catch = short_term_catch)
   OM_metrics <- rbind(OM_metrics, tmp_df)
 }
 SSB_avg <- get_SSB_avg(summary, min_yr = 126, max_yr = 150)
 
 all_metrics <- full_join(OM_metrics, SSB_avg)
-all_metrics_long <- tidyr::gather(all_metrics, "metric", "value", 3:5)
+all_metrics_long <- tidyr::gather(all_metrics, "metric", "value", 3:ncol(all_metrics))
 all_metrics_long$value_bils <- all_metrics_long$value/1000000000
 all_metrics_long$scen_fac <- factor(all_metrics_long$scenario,
                                     levels = c("no-red-tide-F-spr-30", "low-red-tide-F-spr-30", "hi-red-tide-F-spr-30",
@@ -117,17 +118,22 @@ all_metrics_long <- all_metrics_long %>%
                   sep = "-F-",
                   remove = FALSE)
 
+all_metrics_long$MS <- factor(all_metrics_long$MS, levels = c("spr-30", "spr-45"), 
+                              labels = c("spr-30 (less precautionary)", "spr-45 (more precautionary)"))
+
 metrics <- unique(all_metrics_long$metric)
 
 plots <- lapply(metrics, function(i, all_metrics_long) {
   title_lab <- switch(i,
                       avg_catch = "Long-term average catch",
                       avg_SSB = "Long-term average SSB",
-                      catch_sd = "Long-term catch variability")
+                      catch_sd = "Long-term catch variability",
+                      short_term_catch = "Short-term average catch")
   yaxis_lab <- switch(i,
                       avg_catch = "Catch (billion metric tons)",
                       avg_SSB = "Biomass (billion metric tons)",
-                      catch_sd = "Catch (billion metric tons)")
+                      catch_sd = "Catch (billion metric tons)", 
+                      short_term_catch = "Catch (billion metric tons)")
   plot <- ggplot(data = all_metrics_long[all_metrics_long$metric == i, ],
                  aes(x = scen_fac, y = value_bils)) 
   if(i == "avg_SSB") {
@@ -137,7 +143,7 @@ plots <- lapply(metrics, function(i, all_metrics_long) {
     geom_violin(draw_quantiles = 0.5, aes(fill = MS)) +
     scale_y_continuous(limits = c(0, NA))+
     scale_fill_brewer(palette = "Set2", direction = -1)+
-    labs(title = title_lab, x = "OM M pulses", y = yaxis_lab) +
+    labs(title = title_lab, x = "OM natural mortality pulses", y = yaxis_lab) +
     theme_classic(base_size = 22)
   plot
 }, all_metrics_long = all_metrics_long)
@@ -175,19 +181,25 @@ catch_cv_df <- catch_cv_df %>%
                   into = c("OM_scen", "MS"),
                   sep = "-F-",
                   remove = FALSE)
+catch_cv_df$MS <- factor(catch_cv_df$MS, levels = c("spr-30", "spr-45"), 
+                              labels = c("spr-30 (less precautionary)", "spr-45 (more precautionary)"))
+
 
 plot_cv <- ggplot(data = catch_cv_df, aes(x = scen_fac, y = catch_cv)) +
   geom_violin(draw_quantiles = 0.5, aes(fill = MS)) +
   scale_y_continuous(limits = c(0, NA)) +
   scale_fill_brewer(palette = "Set2", direction = -1)+
   labs(title = "Long-term catch variability",
-       x = "OM M pulses", y = "coefficient of variation") +
+       x = "OM natural mortality pulses", y = "coefficient of variation") +
   theme_classic(base_size = 22)
 ggsave(file.path("figures", paste0("run_sel_btarget_scens_", "catch_CV", ".png")),
        width = 8, height = 6, units = "in", device = "png")
 
 plots_no_legend <- lapply(plots, function(x) x + theme(legend.position = "none"))
-patchwork_plot <- (plots_no_legend[[1]]+ plot_cv) / (plots_no_legend[[3]] + plots_no_legend[[2]])
-
+patchwork_plot <- (plots_no_legend[[1]]+ plot_cv) / (plots_no_legend[[3]] + plots_no_legend[[4]])
 
 ggsave("figures/run_red_tide_scens_perf_metrics.png", patchwork_plot, width = 6*2.5, height = 4*2.5, units = "in")
+
+
+#would adding a metric for short term catch be helpful to illustrate tradeoffs?
+
