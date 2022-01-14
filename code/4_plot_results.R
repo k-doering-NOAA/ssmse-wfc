@@ -143,7 +143,7 @@ plots <- lapply(metrics, function(i, all_metrics_long) {
     geom_violin(draw_quantiles = 0.5, aes(fill = MS)) +
     scale_y_continuous(limits = c(0, NA))+
     scale_fill_brewer(palette = "Set2", direction = -1)+
-    guides(fill=guide_legend(title = "Management Procedure")) +
+    guides(fill=guide_legend(title = "Management Strategy")) +
     labs(title = title_lab, x = "OM natural mortality pulses", y = yaxis_lab) +
     theme_classic(base_size = 22)
   plot
@@ -190,7 +190,7 @@ plot_cv <- ggplot(data = catch_cv_df, aes(x = scen_fac, y = catch_cv)) +
   geom_violin(draw_quantiles = 0.5, aes(fill = MS)) +
   scale_y_continuous(limits = c(0, NA)) +
   scale_fill_brewer(palette = "Set2", direction = -1)+
-  guides(fill=guide_legend(title = "Management Procedure")) +
+  guides(fill=guide_legend(title = "Management Strategy")) +
   labs(title = "Long-term catch variability",
        x = "OM natural mortality pulses", y = "coefficient of variation") +
   theme_classic(base_size = 22)
