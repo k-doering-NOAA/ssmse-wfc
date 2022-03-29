@@ -1,67 +1,68 @@
 ---
 title: 'SSMSE: An R package for Management Strategy Evaluation with Stock Synthesis Operating Models'
 tags:
-    - R
-	- management strategy evaluation
-	- fisheries
-	- Stock Synthesis
+  - R
+  - Management Strategy Evaluation
+  - fisheries
+  - Stock Synthesis
+  - stock assessment
 authors:
-    - name: Kathryn L. Doering^[Co-first author, Corresponding author]
-	  orcid: 0000-0002-0396-7044
-	  affiliation: 1
-	- name: Nathan R. Vaughan^[Co-first author]
-	  affiliation: 2
-	- name: John F. Walter
-	  affiliation: 3
-	- name: Richard D. Methot
-	  affiliation: 4
-    - name: Skyler R. Sagarese
-	  orcid: 0000-0002-6631-0103
-	  affiliation: 3
-	- name: Matthew Smith
-	  affiliation: 3
-	- name: Nicholas A. Farmer
-	  affiliation: 5
-	- name: Shannon Calay
-	  affiliation: 3
-    - name: Nancie J. Cummings
-	  affiliation: 3
-	- name: Kelli Johnson
-	  orcid: 0000-0002-5149-451X
-	  affiliation: 6
-	- name: Kristin Marshall
-	  affiliation: 6
-	- name: Cassidy D. Peterson
-	  orcid: 0000-0002-0836-3039
-	  affiliation: 7
-	- name: Ian Taylor
-	  orcid: 0000-0002-4232-5669
-	  affiliation: 6
-    - name: Chantel Wetzel
-	  affiliation: 6
+  - name: Kathryn L. Doering^[Co-first author, Corresponding author]
+    orcid: 00000-0002-0396-7044
+    affiliation: 1
+  - name: Nathan R. Vaughan^[Co-first author]
+    affiliation: 2
+  - name: John F. Walter
+    affiliation: 3
+  - name: Richard D. Methot
+    affiliation: 4
+  - name: Skyler R. Sagarese
+    orcid: 0000-0002-6631-0103
+    affiliation: 3
+  - name: Matthew Smith
+    affiliation: 3
+  - name: Nicholas A. Farmer
+    affiliation: 5
+  - name: Shannon Calay
+    affiliation: 3
+  - name: Nancie J. Cummings
+    affiliation: 3
+  - name: Kelli Johnson
+    orcid: 0000-0002-5149-451X
+    affiliation: 6
+  - name: Kristin Marshall
+    affiliation: 6
+  - name: Cassidy D. Peterson
+    orcid: 0000-0002-0836-3039
+    affiliation: 7
+  - name: Ian Taylor
+    orcid: 0000-0002-4232-5669
+    affiliation: 6
+  - name: Chantel Wetzel
+    affiliation: 6
 
 affiliations:
-    - name: Caelum Research Corporation in support of Northwest Fisheries Science Center, National Oceanic and Atmospheric Administration, Seattle, WA
-	  index: 1
-	- name: Vaughan Analytics in support of Southeast Fisheries Science Center, National Oceanic and Atmospheric Administration, Miami, FL
-      index: 2
-	- name: Southeast Fisheries Science Center, National Oceanic and Atmospheric Administration, Miami, FL
-      index: 3
-    - name: NOAA Senior Scientist for Stock Assessments, National Marine Fisheries Service, National Oceanic and Atmospheric Administration, Seattle, WA
-      index: 4
-	- name: Southeast Regional Office, National Oceanic and Atmospheric Administration, St. Petersburg, FL
-'     index: 5
-    - name: Northwest Fisheries Science Center, National Oceanic and Atmospheric Administration, Seattle, WA
-      index: 6
-	- name: Southeast Fisheries Science Center, National Oceanic and Atmospheric Administration, Beaufort, NC
-      index: 7
+  - name: Caelum Research Corporation in support of Northwest Fisheries Science Center, National Oceanic and Atmospheric Administration, Seattle, WA
+    index: 1
+  - name: Vaughan Analytics in support of Southeast Fisheries Science Center, National Oceanic and Atmospheric Administration, Miami, FL
+    index: 2
+  - name: Southeast Fisheries Science Center, National Oceanic and Atmospheric Administration, Miami, FL
+    index: 3
+  - name: NOAA Senior Scientist for Stock Assessments, National Marine Fisheries Service, National Oceanic and Atmospheric Administration, Seattle, WA
+    index: 4
+  - name: Southeast Regional Office, National Oceanic and Atmospheric Administration, St. Petersburg, FL
+    index: 5
+  - name: Northwest Fisheries Science Center, National Oceanic and Atmospheric Administration, Seattle, WA
+    index: 6
+  - name: Southeast Fisheries Science Center, National Oceanic and Atmospheric Administration, Beaufort, NC
+    index: 7
 date: 29 March 2022
 bibliography: SSMSE_JOSS.bib
 ---
 
 # Statement of Need
 
-Management Strategy Evaluation (MSE) is a decision-support tool for fisheries management. MSE uses closed-loop simulation to evaluate the long-term performance of management strategies with respect to societal goals like sustainability and profits [@smith1994; @punt2014; \autoref{fig:MSE-diagram}]. Management strategies are pre-defined decision rules that dynamically adjust management advice given an estimate of population status. In addition to specifying management actions, management strategies may include the processes of stock assessment (i.e., using models to determine the size and status of a population) [@sainsburyetel2000].
+Management Strategy Evaluation (MSE) is a decision-support tool for fisheries management. MSE uses closed-loop simulation to evaluate the long-term performance of management strategies with respect to societal goals like sustainability and profits [@smith1994; @punt2014; \autoref{fig:MSE-diagram}]. Management strategies are pre-defined decision rules that dynamically adjust management advice given an estimate of population status. In addition to specifying management actions, management strategies may include the processes of stock assessment (i.e., using models to determine the size and status of a population) [@sainsburyetal2000].
 
 Within MSE simulations, operating models (OMs) represent the “true” dynamics and relevant complexity of the system. Multiple OMs are typically generated for a single MSE to reflect different uncertainties and assess management performance under uncertainty. Developing suitable OMs requires an analyst to define, at a minimum: 1) the life history characteristics of the population; 2) the fishing effort and selectivity of all fisheries affecting the population; 3) the spatial distribution of the population; and 4) any critical environmental covariates or species interactions. OMs should be calibrated (or “conditioned”) on available data to ensure that model projections are consistent with historical observations [@punt2014]. Due to the many considerations, developing sufficiently realistic OMs is time-intensive. 
 
@@ -80,7 +81,7 @@ SSMSE gives users flexibility in the MSE setup while reducing the amount of code
 
 Users only need a few functions to run an analysis using the SSMSE package (Table 1; \autoref{fig:SSMSE-workflow}). The `run_SSMSE()` wrapper function runs the SSMSE simulations (\autoref{fig:SSMSE-steps}). Inputs to `run_SSMSE()` include the names and locations of the conditioned ss3 models to use as operating models (`OM_name_vec` and `OM_in_dir_vec`), the type of management strategy for each scenario (`MS_vec`), the number of iterations to run for each scenario (`iter_vec`), and how to sample from the operating model in each scenario (`sample_struct_list`), the number of years to run the simulations (`nyrs_vec`) and how often the management strategy is run (`nyrs_assess_vec`). Helper functions for setting the variables to pass to `run_SSMSE()` are available. `run_SSMSE()` includes the option to run iterations in parallel (`run_parallel = TRUE`), reducing the time required to run simulations. Other options include the ability to use an SS3 estimation model or a custom function as a management strategy and the ability to change parameters in the OM during the projection period of the simulation. The custom function must be able to use sampling from an SS3 data file as input and output fleet-specific catches by year. After the simulations are complete, users can call the `SSMSE_summary_all()` function to compile key model values from many model folders into three summary tables. The user can then conduct further analyses and plots based on the summaries. 
 
-Five types of uncertainty that are typically captured in MSEs are process uncertainty, parameter uncertainty, model uncertainty, errors in assessments, and implementation uncertainty [@puntetal2014]. These can all be implemented using the SSMSE package:
+Five types of uncertainty that are typically captured in MSEs are process uncertainty, parameter uncertainty, model uncertainty, errors in assessments, and implementation uncertainty [@punt2014]. These can all be implemented using the SSMSE package:
 
 
 
@@ -164,7 +165,7 @@ Sample n years of data | Sample 5 years of data | No | No
 
 # Figures
 
-![The main components of MSE simulations. The operating model (OM) represents the “truth”. From the OM, data can be sampled (in sample data step) and passed to the management strategy. The management strategy is run and usually influences the OM (for example, the management strategy may remove a certain amount of catch from the OM) as the OM is stepped forward in time. The management strategy can be subdivided into a step that estimates the population quantities (often using an estimation method) and a step that simulates management actions (including error in implementing the management actions). \label{}](\label{fig:MSE_diagram}images/MSE_diagram.png)
+![The main components of MSE simulations. The operating model (OM) represents the “truth”. From the OM, data can be sampled (in sample data step) and passed to the management strategy. The management strategy is run and usually influences the OM (for example, the management strategy may remove a certain amount of catch from the OM) as the OM is stepped forward in time. The management strategy can be subdivided into a step that estimates the population quantities (often using an estimation method) and a step that simulates management actions (including error in implementing the management actions). \label{fig:MSE-diagram}](images/MSE-diagram.png)
 
 ![Schematic illustrating the steps within the `run_SSMSE()` function. Note for simplicity, this diagram only shows steps for a single iteration, even though multiple scenarios could be called through `run_SSMSE()`.\label{fig:SSMSE-steps}](images/SSMSE-steps.png)
 
