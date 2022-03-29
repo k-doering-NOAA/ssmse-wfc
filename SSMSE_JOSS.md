@@ -64,6 +64,8 @@ bibliography: SSMSE_JOSS.bib
 
 Management Strategy Evaluation (MSE) is a decision-support tool for fisheries management. MSE uses closed-loop simulation to evaluate the long-term performance of management strategies with respect to societal goals like sustainability and profits [@smith1994; @punt2014] \autoref{fig:MSE-diagram}. Management strategies are pre-defined decision rules that dynamically adjust management advice given an estimate of population status. In addition to specifying management actions, management strategies may include the processes of stock assessment (i.e., using models to determine the size and status of a population) [@sainsburyetal2000].
 
+<!---
+
 Within MSE simulations, operating models (OMs) represent the “true” dynamics and relevant complexity of the system. Multiple OMs are typically generated for a single MSE to reflect different uncertainties and assess management performance under uncertainty. Developing suitable OMs requires an analyst to define, at a minimum: 1) the life history characteristics of the population; 2) the fishing effort and selectivity of all fisheries affecting the population; 3) the spatial distribution of the population; and 4) any critical environmental covariates or species interactions. OMs should be calibrated (or “conditioned”) on available data to ensure that model protjections are consistent with historical observations [@punt2014]. Due to the many considerations, developing sufficiently realistic OMs is time-intensive. 
 
 Fortunately, the requirements for specifying OMs are largely the same as the requirements for developing a stock assessment. Due to the overlap in requirements and the millions of dollars invested in developing stock assessments [@methot2015], MSE approaches that build on previous stock assessment products can increase productivity [@maunder2014]. Stock assessment models for federally managed species in the U.S. undergo substantial scrutiny during a peer review process [@lynchetal2018; @brownetal2006], and thus stock assessment models provide an excellent starting point for OMs used in MSE.
@@ -176,3 +178,4 @@ Sample n years of data | Sample 5 years of data | No | No
 ![Example output plot that could be created from SSMSE output. Each violin represents the distribution of long-term average catch from a different scenario. Colors of the violins correspond to which management strategy was used in the scenario. The horizontal lines within each violin represent the median. \label{fig:case-study-violin}](images/case-study-violin.png)
 
 # References
+-->
