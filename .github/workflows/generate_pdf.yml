@@ -22,4 +22,5 @@ jobs:
           # This is the output path where Pandoc will write the compiled
           # PDF. Note, this should be the same directory as the input
           # paper.md
-          path: SSMSE_JOSS.pdf
+          # note that regardless of the md name, it will be called paper.pdf
+          path: paper.pdf
