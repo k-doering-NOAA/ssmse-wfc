@@ -12,7 +12,7 @@ jobs:
         with:
           journal: joss
           # This should be the path to the paper within your repo.
-          paper-path: SSMSE_JOSS.md
+          paper-path: docs/SSMSE_JOSS.md
       - name: look at files
         run: ls
       - name: Upload
@@ -24,3 +24,4 @@ jobs:
           # paper.md
           # note that regardless of the md name, it will be called paper.pdf
           path: paper.pdf
+
