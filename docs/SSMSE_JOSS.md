@@ -1,20 +1,61 @@
+---
+title: 'SSMSE: An R package for Management Strategy Evaluation with Stock Synthesis Operating Models'
+tags:
+    - R
+	- management strategy evaluation
+	- fisheries
+	- Stock Synthesis
+authors:
+    - name: Kathryn L. Doering^[Co-first author, Corresponding author]
+	  orcid: 0000-0002-0396-7044
+	  affiliation: 1
+	- name: Nathan R. Vaughan^[Co-first author]
+	  affiliation: 2
+	- name: John F. Walter
+	  affiliation: 3
+	- name: Richard D. Methot
+	  affiliation: 4
+    - name: Skyler R. Sagarese
+	  affiliation: 3
+	- name: Matthew Smith
+	  affiliation: 3
+	- name: Nicholas A. Farmer
+	  affiliation: 5
+	- name: Shannon Calay
+	  affiliation: 3
+    - name: Nancie J. Cummings
+	  affiliation: 3
+	- name: Kelli Johnson
+	  affiliation: 6
+	- name: Kristin Marshall
+	  affiliation: 6
+	- name: Cassidy D. Peterson
+	  affiliation: 7
+	- name: Ian Taylor
+	  affiliation: 6
+    - name: Chantel Wetzel
+	  affiliation: 6
 
-# SSMSE: An R package for Management Strategy Evaluation with Stock Synthesis Operating Models
+affiliations:
+    - name: Caelum Research Corporation in support of Northwest Fisheries Science Center, National Oceanic and Atmospheric Administration, Seattle, WA
+	  index: 1
+	- name: Vaughan Analytics in support of Southeast Fisheries Science Center, National Oceanic and Atmospheric Administration, Miami, FL
+      index: 2
+	- name: Southeast Fisheries Science Center, National Oceanic and Atmospheric Administration, Miami, FL
+      index: 3
+    - name: NOAA Senior Scientist for Stock Assessments, National Marine Fisheries Service, National Oceanic and Atmospheric Administration, Seattle, WA
+      index: 4
+	- name: Southeast Regional Office, National Oceanic and Atmospheric Administration, St. Petersburg, FL
+'     index: 5
+    - name: Northwest Fisheries Science Center, National Oceanic and Atmospheric Administration, Seattle, WA
+      index: 6
+	- name: Southeast Fisheries Science Center, National Oceanic and Atmospheric Administration, Beaufort, NC
+      index: 7
+date: 29 March 2022
+bibliography: SSMSE_JOSS.bib
+---
 
-Kathryn L. Doering<sup>1*</sup>, Nathan R. Vaughan<sup>2*</sup>, John F. Walter<sup>3</sup>, Richard D. Methot<sup>4</sup>, Skyler R. Sagarese<sup>3</sup>, Matthew Smith<sup>3</sup>, Nicholas A. Farmer<sup>5</sup>, Shannon Calay<sup>3</sup>, Nancie J. Cummings<sup>3</sup>, Kelli Johnson<sup>6</sup>, Kristin Marshall<sup>6</sup>, Cassidy D. Peterson<sup>7</sup>, Ian Taylor<sup>6</sup>, and Chantel Wetzel<sup>6</sup>
-
-
-1. Caelum Research Corporation in support of Northwest Fisheries Science Center, National Oceanic and Atmospheric Administration, Seattle, WA
-2. Vaughan Analytics in support of Southeast Fisheries Science Center, National Oceanic and Atmospheric Administration, Miami, FL
-3. Southeast Fisheries Science Center, National Oceanic and Atmospheric Administration, Miami, FL
-4. NOAA Senior Scientist for Stock Assessments, National Marine Fisheries Service, National Oceanic and Atmospheric Administration, Seattle, WA
-5. Southeast Regional Office, National Oceanic and Atmospheric Administration, St. Petersburg, FL
-6. Northwest Fisheries Science Center, National Oceanic and Atmospheric Administration, Seattle, WA
-7. Southeast Fisheries Science Center, National Oceanic and Atmospheric Administration, Beaufort, NC
-
-*These 2 authors contributed equally.
-
-## Statement of Need
+# Statement of Need
 
 Management Strategy Evaluation (MSE) is a decision-support tool for fisheries management. MSE uses closed-loop simulation to evaluate the long-term performance of management strategies with respect to societal goals like sustainability and profits [@smith1994; @punt2014; Figure MSE-diagram]. Management strategies are pre-defined decision rules that dynamically adjust management advice given an estimate of population status. In addition to specifying management actions, management strategies may include the processes of stock assessment (i.e., using models to determine the size and status of a population) [@sainsburyetel2000].
 
@@ -29,11 +70,11 @@ Existing generalized MSE tools [e.g., openMSE, @openMSEcite; FLR’s mse R packa
 The primary goal of the SSMSE project was to develop a tool that can use existing SS3 models to generate OMs and then use these OMs in MSE simulations. This approach provides the advantages of allowing a wide selection of existing stock assessment models to be directly used in MSE.
 
 
-## Overview
+# Overview
 
 SSMSE gives users flexibility in the MSE setup while reducing the amount of code that analysts write to conduct novel MSEs. SSMSE is available as an R package and employs other R dependencies developed for use with SS3 [e.g., ss3sim, @andersonetal2014; r4ss @tayloretal2021].
 
-Users only need a few functions to run an analysis using the SSMSE package (Table 1; Figure SSMSE-workflow). The `run_SSMSE()` wrapper function runs the SSMSE simulations (Figure SSMSE-steps). Inputs to `run_SSMSE()` include the names and locations of the conditioned ss3 models to use as operating models (`OM_name_vec` and `OM_in_dir_vec`), the type of management strategy for each scenario (`MS_vec`), the number of iterations to run for each scenario (`iter_vec`), and how to sample from the operating model in each scenario (‘sample_struct_list`), the number of years to run the simulations (`nyrs_vec`) and how often the management strategy is run (`nyrs_assess_vec`). Helper functions for setting the variables to pass to `run_SSMSE()` are available. `run_SSMSE()` includes the option to run iterations in parallel (`run_parallel = TRUE`), reducing the time required to run simulations. Other options include the ability to use an SS3 estimation model or a custom function as a management strategy and the ability to change parameters in the OM during the projection period of the simulation. The custom function must be able to use sampling from an SS3 data file as input and output fleet-specific catches by year. After the simulations are complete, users can call the `SSMSE_summary_all()` function to compile key model values from many model folders into three summary tables. The user can then conduct further analyses and plots based on the summaries. 
+Users only need a few functions to run an analysis using the SSMSE package (Table 1; Figure SSMSE-workflow). The `run_SSMSE()` wrapper function runs the SSMSE simulations (Figure SSMSE-steps). Inputs to `run_SSMSE()` include the names and locations of the conditioned ss3 models to use as operating models (`OM_name_vec` and `OM_in_dir_vec`), the type of management strategy for each scenario (`MS_vec`), the number of iterations to run for each scenario (`iter_vec`), and how to sample from the operating model in each scenario (`sample_struct_list`), the number of years to run the simulations (`nyrs_vec`) and how often the management strategy is run (`nyrs_assess_vec`). Helper functions for setting the variables to pass to `run_SSMSE()` are available. `run_SSMSE()` includes the option to run iterations in parallel (`run_parallel = TRUE`), reducing the time required to run simulations. Other options include the ability to use an SS3 estimation model or a custom function as a management strategy and the ability to change parameters in the OM during the projection period of the simulation. The custom function must be able to use sampling from an SS3 data file as input and output fleet-specific catches by year. After the simulations are complete, users can call the `SSMSE_summary_all()` function to compile key model values from many model folders into three summary tables. The user can then conduct further analyses and plots based on the summaries. 
 
 Five types of uncertainty that are typically captured in MSEs are process uncertainty, parameter uncertainty, model uncertainty, errors in assessments, and implementation uncertainty [@puntetal2014]. These can all be implemented using the SSMSE package:
 
@@ -54,7 +95,7 @@ remotes::install_github(“nmfs-fish-tools/SSMSE”)
 ```
 
 
-## Case Study
+# Case Study
 
 Natural mortality (i.e., mortality not due to fishing) is a key life history characteristic that can have large effects on both population estimates and management benchmarks [e.g.,@martyetal2003; @maceetal2021]. Natural mortality is often assumed constant in population dynamics models because collecting informative data to estimate natural mortality is difficult. However, for many populations, natural mortality likely varies in magnitude over time [e.g., @krauseetal2020; @regularetal2022; @plaganyietal2022]. 
 
@@ -79,66 +120,46 @@ Within the same management strategy, scenarios with higher spikes of natural mor
 The result that managing with more precaution results in higher long-term yields and less variability in yields is not surprising given that the level of spawning biomass that results in maximum sustained yield (SSB<sub>MSY</sub>) is closer to SPR<sub>45</sub> than to SPR<sub>30</sub> for this population. Harford et al. (2018) used a custom-built MSE and found that managing with more precaution in the face of episodic mortality resulted in lower probabilities of overfishing and being overfished, but at the expense of lower catches. Here with only a few lines of code, SSMSE demonstrates similar findings, providing a powerful tool for rapidly conducting MSEs from existing SS3 stock assessment applications.
 
 
-## Summary
+# Summary
 
 SSMSE is a generalizable tool for stock assessment scientists and MSE practitioners. It allows SS3 models to be used directly as OMs (and optionally as estimation models) within MSEs. We expect that SSMSE will greatly advance the capacity to conduct MSE. As SS3 is one of the most widely used stock assessment platforms, adding MSE capacity means that any existing SS3 model could be the basis for MSE simulations with less effort and code. This will allow practitioners to more readily evaluate a wide range of research questions and potential management actions. 
 
 
-## Acknowledgements
+# Acknowledgements
 
 Thanks to Desiree Tommasi for testing SSMSE and a comments that greatly improved this manuscript; Robert Wildermuth and Peter Kuriyama for their extensive testing of the SSMSE package; Matthew Damiano, Allan Hicks, and Huihua Lee for early discussions regarding MSE and the development of SSMSE; and Corrine Bassin and Christine Stawitz for their support in setting up the repository and documentation. KD and NV also acknowledge funding for this project was provided through a NOAA Magnuson Stevens Act development grant.
 
 
-## Figures and Tables
+# Figures and Tables
 
 Table 1. Functions that users can call in SSMSE.
-
 Function               | Description
-
 ---------------------- | ------------------
-
 `run_SSMSE()`            | Run the MSE simulations
-
 `SSMSE_summary_all()`    | Summarize MSE output
-
 `create_sample_struct()`  | Helper function to create a list for future sampling from a model to use as input in `run_SSMSE()`
-
 `create_future_om_list()` | Helper function that provides examples of the structure for the future_om_list input to `run_SSMSE()`.
-
 `develop_OMs()`           | Helper function to turn one OM into many
-
 `run_EM()`       |  Run an SS3 estimation model (uses run_ss_model)
-
 `run_ss_model()` | Run an SS3 model
-
 `get_bin()`      | Get location of the SS3 binary.
-
 `parse_MS()`     | Function that runs the management strategy and returns catch by fleet for the projections. A reference function for those setting up custom management strategies. 
-
 `plot_index_sampling()` | Plot to compare the sampled index values to the OM expected values and original OM conditioning index data.
-
 `plot_comp_sampling()`  | Plot to compare the sampled composition values to the OM expected values and original OM conditioning composition data.
 
 Table SSMSE-case-study. Details about the steps in the case study.
 
 Step | Details | Differences across scenarios? | Differences across iterations within a scenario? 
-
 ---------------------- | ------------------ |---------------------- | ------------------
-
 Create OM | Use OMs that differ in their assumed natural mortality values across scenarios and recruitment deviations and fishery selectivity pattern across iterations within scenarios | Yes | Yes 
-
 Sample data from OM | Use sampling scheme: survey index and age composition every 5 years, length composition from the fishery every 5 years. Use same sample size as in the original model the OM is derived from | No | No
-
 Run Estimation method | Use SS3 estimation models, differ only in assumed natural mortality | Yes | No
-
 Use Management actions to project n years of catch | Use the forecast modules from the SS3 models to project catch 5 years, managing either for SPR<sub>30</sub> or SPR<sub>45</sub> | Yes | No
-
 Update OM with n years of catch | Update with 5 years of catch | No | No
-
 Sample n years of data | Sample 5 years of data | No | No
 
 
-![alt_text](images/image1.png "image_tooltip")
+![The main components of MSE simulations. The operating model (OM) represents the “truth”. From the OM, data can be sampled (in sample data step) and passed to the management strategy. The management strategy is run and usually influences the OM (for example, the management strategy may remove a certain amount of catch from the OM) as the OM is stepped forward in time. The management strategy can be subdivided into a step that estimates the population quantities (often using an estimation method) and a step that simulates management actions (including error in implementing the management actions). \label{}](\label{fig:MSE_diagram}images/MSE_diagram.png)
 
 
 Figure MSE-diagram. The main components of MSE simulations. The operating model (OM) represents the “truth”. From the OM, data can be sampled (in sample data step) and passed to the management strategy. The management strategy is run and usually influences the OM (for example, the management strategy may remove a certain amount of catch from the OM) as the OM is stepped forward in time. The management strategy can be subdivided into a step that estimates the population quantities (often using an estimation method) and a step that simulates management actions (including error in implementing the management actions).
@@ -148,10 +169,6 @@ Figure MSE-diagram. The main components of MSE simulations. The operating model 
 
 
 Figure SSMSE-steps. Schematic illustrating the steps within the `run_SSMSE()` function. Note for simplicity, this diagram only shows steps for a single iteration, even though multiple scenarios could be called through `run_SSMSE()`.
-
-
-![alt_text](images/image3.png "image_tooltip")
-
 
 
 ![alt_text](images/image4.png "image_tooltip")
