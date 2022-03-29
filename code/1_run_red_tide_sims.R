@@ -1,8 +1,8 @@
 # Run scenarios relating to q 
 
 # load pkgs set options ----
-#devtools::install_github("r4ss/r4ss", ref = "64b9e62")
-#devtools::install_github("nmfs-fish-tools/SSMSE", ref = "db43ab4")
+#devtools::install_github("r4ss/r4ss", ref = "155a521")
+#devtools::install_github("nmfs-fish-tools/SSMSE@v0.2.5")
 library(SSMSE)
 library(r4ss)
 
@@ -20,8 +20,8 @@ dir.create(runs_path)
 dir.create(mods_path)
 
 # define the scenarios ----
-niters <- 30
-start_iters <- 21
+niters <- 2
+start_iters <- 1
 
 # the scenarios are: 
 # three levels of M changes in the OM (none, more frequent, less frequent)
@@ -107,12 +107,12 @@ mod_change_M$input <- M_custom_dataframe
 rec_dev_specify <- template_mod_change[[1]]
 rec_dev_specify$pars <- "rec_devs"
 rec_dev_specify$scen <- c("replicate", "all")
-# rec_dev_specify$input$first_yr_averaging <- 1
-# rec_dev_specify$input$last_yr_averaging <- 100
+rec_dev_specify$input$first_yr_averaging <- 1 # use same sd as from the orig model.
+rec_dev_specify$input$last_yr_averaging <- 100
 rec_dev_specify$input$last_yr_orig_val <- 100
 rec_dev_specify$input$first_yr_final_val <- 101
 rec_dev_specify$input$ts_param <- "sd"
-rec_dev_specify$input$value <- 0.1
+rec_dev_specify$input$value <- NA
 
 # put together a complete list
 future_om_list <- list(mod_change_M, mod_change_sel, rec_dev_specify)
@@ -159,7 +159,7 @@ out <- SSMSE::run_SSMSE(out_dir_scen_vec = rep("model_runs", 6),
                         run_parallel = TRUE,
                         n_cores = 6
                         )
-saveRDS(out, file = file.path("model_runs", "run_SSMSE_out_25Aug2021.rda"))
+saveRDS(out, file = file.path("model_runs", "run_SSMSE_out_15Dec2021.rda"))
 # 
 # # look at results ----
 summary <- SSMSE::SSMSE_summary_all(dir = "model_runs", run_parallel = TRUE)
