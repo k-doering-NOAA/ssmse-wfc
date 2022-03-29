@@ -13,6 +13,8 @@ jobs:
           journal: joss
           # This should be the path to the paper within your repo.
           paper-path: SSMSE_JOSS.md
+      - name: look at files
+        run: ls
       - name: Upload
         uses: actions/upload-artifact@v1
         with:
