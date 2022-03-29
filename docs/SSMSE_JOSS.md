@@ -16,6 +16,7 @@ authors:
 	- name: Richard D. Methot
 	  affiliation: 4
     - name: Skyler R. Sagarese
+	  orcid: 0000-0002-6631-0103
 	  affiliation: 3
 	- name: Matthew Smith
 	  affiliation: 3
@@ -26,12 +27,15 @@ authors:
     - name: Nancie J. Cummings
 	  affiliation: 3
 	- name: Kelli Johnson
+	  orcid: 0000-0002-5149-451X
 	  affiliation: 6
 	- name: Kristin Marshall
 	  affiliation: 6
 	- name: Cassidy D. Peterson
+	  orcid: 0000-0002-0836-3039
 	  affiliation: 7
 	- name: Ian Taylor
+	  orcid: 0000-0002-4232-5669
 	  affiliation: 6
     - name: Chantel Wetzel
 	  affiliation: 6
@@ -169,3 +173,5 @@ Sample n years of data | Sample 5 years of data | No | No
 ![Natural mortality patterns in the OMs through the simulation years (years 101-150).\label{fig:case-study-M}](images/case-study-M.png)
 
 ![Example output plot that could be created from SSMSE output. Each violin represents the distribution of long-term average catch from a different scenario. Colors of the violins correspond to which management strategy was used in the scenario. The horizontal lines within each violin represent the median. \label{fig:case-study-violin}](images/case-study-violin.png)
+
+# References
