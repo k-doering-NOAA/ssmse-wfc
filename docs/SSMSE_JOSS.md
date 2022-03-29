@@ -57,7 +57,7 @@ bibliography: SSMSE_JOSS.bib
 
 # Statement of Need
 
-Management Strategy Evaluation (MSE) is a decision-support tool for fisheries management. MSE uses closed-loop simulation to evaluate the long-term performance of management strategies with respect to societal goals like sustainability and profits [@smith1994; @punt2014; Figure MSE-diagram]. Management strategies are pre-defined decision rules that dynamically adjust management advice given an estimate of population status. In addition to specifying management actions, management strategies may include the processes of stock assessment (i.e., using models to determine the size and status of a population) [@sainsburyetel2000].
+Management Strategy Evaluation (MSE) is a decision-support tool for fisheries management. MSE uses closed-loop simulation to evaluate the long-term performance of management strategies with respect to societal goals like sustainability and profits [@smith1994; @punt2014; \autoref{fig:MSE-diagram}]. Management strategies are pre-defined decision rules that dynamically adjust management advice given an estimate of population status. In addition to specifying management actions, management strategies may include the processes of stock assessment (i.e., using models to determine the size and status of a population) [@sainsburyetel2000].
 
 Within MSE simulations, operating models (OMs) represent the “true” dynamics and relevant complexity of the system. Multiple OMs are typically generated for a single MSE to reflect different uncertainties and assess management performance under uncertainty. Developing suitable OMs requires an analyst to define, at a minimum: 1) the life history characteristics of the population; 2) the fishing effort and selectivity of all fisheries affecting the population; 3) the spatial distribution of the population; and 4) any critical environmental covariates or species interactions. OMs should be calibrated (or “conditioned”) on available data to ensure that model projections are consistent with historical observations [@punt2014]. Due to the many considerations, developing sufficiently realistic OMs is time-intensive. 
 
@@ -74,7 +74,7 @@ The primary goal of the SSMSE project was to develop a tool that can use existin
 
 SSMSE gives users flexibility in the MSE setup while reducing the amount of code that analysts write to conduct novel MSEs. SSMSE is available as an R package and employs other R dependencies developed for use with SS3 [e.g., ss3sim, @andersonetal2014; r4ss @tayloretal2021].
 
-Users only need a few functions to run an analysis using the SSMSE package (Table 1; Figure SSMSE-workflow). The `run_SSMSE()` wrapper function runs the SSMSE simulations (Figure SSMSE-steps). Inputs to `run_SSMSE()` include the names and locations of the conditioned ss3 models to use as operating models (`OM_name_vec` and `OM_in_dir_vec`), the type of management strategy for each scenario (`MS_vec`), the number of iterations to run for each scenario (`iter_vec`), and how to sample from the operating model in each scenario (`sample_struct_list`), the number of years to run the simulations (`nyrs_vec`) and how often the management strategy is run (`nyrs_assess_vec`). Helper functions for setting the variables to pass to `run_SSMSE()` are available. `run_SSMSE()` includes the option to run iterations in parallel (`run_parallel = TRUE`), reducing the time required to run simulations. Other options include the ability to use an SS3 estimation model or a custom function as a management strategy and the ability to change parameters in the OM during the projection period of the simulation. The custom function must be able to use sampling from an SS3 data file as input and output fleet-specific catches by year. After the simulations are complete, users can call the `SSMSE_summary_all()` function to compile key model values from many model folders into three summary tables. The user can then conduct further analyses and plots based on the summaries. 
+Users only need a few functions to run an analysis using the SSMSE package (Table 1; \autoref{fig:SSMSE-workflow}). The `run_SSMSE()` wrapper function runs the SSMSE simulations (\autoref{fig:SSMSE-steps}). Inputs to `run_SSMSE()` include the names and locations of the conditioned ss3 models to use as operating models (`OM_name_vec` and `OM_in_dir_vec`), the type of management strategy for each scenario (`MS_vec`), the number of iterations to run for each scenario (`iter_vec`), and how to sample from the operating model in each scenario (`sample_struct_list`), the number of years to run the simulations (`nyrs_vec`) and how often the management strategy is run (`nyrs_assess_vec`). Helper functions for setting the variables to pass to `run_SSMSE()` are available. `run_SSMSE()` includes the option to run iterations in parallel (`run_parallel = TRUE`), reducing the time required to run simulations. Other options include the ability to use an SS3 estimation model or a custom function as a management strategy and the ability to change parameters in the OM during the projection period of the simulation. The custom function must be able to use sampling from an SS3 data file as input and output fleet-specific catches by year. After the simulations are complete, users can call the `SSMSE_summary_all()` function to compile key model values from many model folders into three summary tables. The user can then conduct further analyses and plots based on the summaries. 
 
 Five types of uncertainty that are typically captured in MSEs are process uncertainty, parameter uncertainty, model uncertainty, errors in assessments, and implementation uncertainty [@puntetal2014]. These can all be implemented using the SSMSE package:
 
@@ -99,9 +99,9 @@ remotes::install_github(“nmfs-fish-tools/SSMSE”)
 
 Natural mortality (i.e., mortality not due to fishing) is a key life history characteristic that can have large effects on both population estimates and management benchmarks [e.g.,@martyetal2003; @maceetal2021]. Natural mortality is often assumed constant in population dynamics models because collecting informative data to estimate natural mortality is difficult. However, for many populations, natural mortality likely varies in magnitude over time [e.g., @krauseetal2020; @regularetal2022; @plaganyietal2022]. 
 
-In this case study, we used SSMSE to investigate the effects on management objectives related to catch and population size of not accounting for natural mortality spikes in the estimation model informing management (i.e., stock assessment model; Table SSMSE-case-study). Natural mortality spikes could occur due to periodic changes in environmental conditions that can kill fish, such as red tide [@steidinger2009] or upwelling-driven hypoxia [@chanetal2008]. We assessed the performance of two distinct management strategies. We used a cod-like species as the population and one fishing fleet and one survey in both the operating and estimation models.
+In this case study, we used SSMSE to investigate the effects on management objectives related to catch and population size of not accounting for natural mortality spikes in the estimation model informing management (i.e., stock assessment model; Table 2). Natural mortality spikes could occur due to periodic changes in environmental conditions that can kill fish, such as red tide [@steidinger2009] or upwelling-driven hypoxia [@chanetal2008]. We assessed the performance of two distinct management strategies. We used a cod-like species as the population and one fishing fleet and one survey in both the operating and estimation models.
 
-Because the pattern of natural mortality is uncertain, we built three OMs, each reflecting a different hypothesis of the “true” natural mortality dynamics of the stock: 1) constant instantaneous natural mortality at 0.2 yr<sup>-1</sup>; 2) natural mortality at 0.2 yr<sup>-1</sup> with a spike in natural mortality of 0.3 yr<sup>-1</sup> every 5 years; and 3) natural mortality at 0.2 yr<sup>-1</sup> with a spike in natural mortality of 0.4 yr<sup>-1</sup> every 5 years (Figure case-study-M). In all OMs, process uncertainty in selectivity and recruitment was considered. One fishery length selectivity parameter was assumed to vary randomly from year to year in the simulations. In addition, annual recruitment deviations were assumed to vary randomly from year to year. Selectivity and recruitment likely vary over time [@sampsonandscott2011; @maunderandthorson2019], so allowing random deviations was considered a more realistic characterization of uncertainty among iterations. To ensure differences in performance were due to the management strategy rather than from the use of different randomly selected selectivity parameter values and recruitment deviations, SSMSE allows for the same sets of random values to be used for each scenario by setting a seed in the `run_SSMSE()` function. We ran 100 iterations of each scenario to characterize the process uncertainty in recruitment and selectivity. The number of iterations can also be specified in the `run_SSMSE()` function.
+Because the pattern of natural mortality is uncertain, we built three OMs, each reflecting a different hypothesis of the “true” natural mortality dynamics of the stock: 1) constant instantaneous natural mortality at 0.2 yr<sup>-1</sup>; 2) natural mortality at 0.2 yr<sup>-1</sup> with a spike in natural mortality of 0.3 yr<sup>-1</sup> every 5 years; and 3) natural mortality at 0.2 yr<sup>-1</sup> with a spike in natural mortality of 0.4 yr<sup>-1</sup> every 5 years (\autoref{fig:case-study-M}). In all OMs, process uncertainty in selectivity and recruitment was considered. One fishery length selectivity parameter was assumed to vary randomly from year to year in the simulations. In addition, annual recruitment deviations were assumed to vary randomly from year to year. Selectivity and recruitment likely vary over time [@sampsonandscott2011; @maunderandthorson2019], so allowing random deviations was considered a more realistic characterization of uncertainty among iterations. To ensure differences in performance were due to the management strategy rather than from the use of different randomly selected selectivity parameter values and recruitment deviations, SSMSE allows for the same sets of random values to be used for each scenario by setting a seed in the `run_SSMSE()` function. We ran 100 iterations of each scenario to characterize the process uncertainty in recruitment and selectivity. The number of iterations can also be specified in the `run_SSMSE()` function.
 
 Two management strategies were tested with each of the OMs using the built-in “EM” management strategy option in SSMSE. This type of management strategy uses an SS3 model to estimate population size and status (simulating a stock assessment), and the SS3 forecast file associated with the estimation model to estimate management benchmarks and set future catches consistent with the harvest controls specified by the user in the estimation model forecast file. Two management strategies with alternative target harvest rates corresponding to a Spawning Potential Ratio (SPR) of 30% or 45% (SPR<sub>30</sub> and SPR<sub>45</sub>, respectively) were used. The estimation model assumed constant natural mortality of 0.2 yr<sup>-1</sup> (i.e., matching true base natural mortality but not accounting for spikes in natural mortality). 
 
@@ -113,7 +113,7 @@ The code used to set up this simulation is available at [https://nmfs-fish-tools
 
 Iterations were excluded if any runs of the estimation model failed to converge, had a high maximum gradient (>2), or had parameters on bounds. This resulted in a maximum of six iterations (6%) excluded from any scenario.
 
-We found that managing the stock with more precaution in the face of episodic mortality resulted in both higher long-term catch and less variability in catch (Figure case-study-violin). However, managing the stock with more precaution comes at the cost of less short-term catch. These results were true regardless if natural mortality was correctly captured within the management strategy or not.
+We found that managing the stock with more precaution in the face of episodic mortality resulted in both higher long-term catch and less variability in catch (\autoref{fig:case-study-violin}). However, managing the stock with more precaution comes at the cost of less short-term catch. These results were true regardless if natural mortality was correctly captured within the management strategy or not.
 
 Within the same management strategy, scenarios with higher spikes of natural mortality that were unaccounted for had slightly lower average catch, slightly higher catch variability, and slightly lower SSB. In the short term, catch was similar regardless of how high the unaccounted natural mortality spike was. Although there were some consequences for not accounting for spikes in natural mortality, the performance metrics demonstrate that the choice of management strategy rather than capturing natural mortality correctly (or not) makes a bigger difference in performance.
 
@@ -130,7 +130,7 @@ SSMSE is a generalizable tool for stock assessment scientists and MSE practition
 Thanks to Desiree Tommasi for testing SSMSE and a comments that greatly improved this manuscript; Robert Wildermuth and Peter Kuriyama for their extensive testing of the SSMSE package; Matthew Damiano, Allan Hicks, and Huihua Lee for early discussions regarding MSE and the development of SSMSE; and Corrine Bassin and Christine Stawitz for their support in setting up the repository and documentation. KD and NV also acknowledge funding for this project was provided through a NOAA Magnuson Stevens Act development grant.
 
 
-# Figures and Tables
+# Tables
 
 Table 1. Functions that users can call in SSMSE.
 Function               | Description
@@ -147,7 +147,7 @@ Function               | Description
 `plot_index_sampling()` | Plot to compare the sampled index values to the OM expected values and original OM conditioning index data.
 `plot_comp_sampling()`  | Plot to compare the sampled composition values to the OM expected values and original OM conditioning composition data.
 
-Table SSMSE-case-study. Details about the steps in the case study.
+Table 2. Details about the steps in the case study.
 
 Step | Details | Differences across scenarios? | Differences across iterations within a scenario? 
 ---------------------- | ------------------ |---------------------- | ------------------
@@ -158,32 +158,14 @@ Use Management actions to project n years of catch | Use the forecast modules fr
 Update OM with n years of catch | Update with 5 years of catch | No | No
 Sample n years of data | Sample 5 years of data | No | No
 
+# Figures
 
 ![The main components of MSE simulations. The operating model (OM) represents the “truth”. From the OM, data can be sampled (in sample data step) and passed to the management strategy. The management strategy is run and usually influences the OM (for example, the management strategy may remove a certain amount of catch from the OM) as the OM is stepped forward in time. The management strategy can be subdivided into a step that estimates the population quantities (often using an estimation method) and a step that simulates management actions (including error in implementing the management actions). \label{}](\label{fig:MSE_diagram}images/MSE_diagram.png)
 
+![Schematic illustrating the steps within the `run_SSMSE()` function. Note for simplicity, this diagram only shows steps for a single iteration, even though multiple scenarios could be called through `run_SSMSE()`.\label{fig:SSMSE-steps}](images/SSMSE-steps.png)
 
-Figure MSE-diagram. The main components of MSE simulations. The operating model (OM) represents the “truth”. From the OM, data can be sampled (in sample data step) and passed to the management strategy. The management strategy is run and usually influences the OM (for example, the management strategy may remove a certain amount of catch from the OM) as the OM is stepped forward in time. The management strategy can be subdivided into a step that estimates the population quantities (often using an estimation method) and a step that simulates management actions (including error in implementing the management actions).
+![Diagram illustrating a basic workflow for using SSMSE. This diagram shows the functions (ovals) in addition to input and output objects (rounded rectangles) and the steps for which users will write their own code (rectangle enclosed by dashed line).\label{fig:SSMSE-workflow}](images/SSMSE-workflow.png)
 
- 
-![alt_text](images/image2.png "image_tooltip")
+![Natural mortality patterns in the OMs through the simulation years (years 101-150).\label{fig:case-study-M}](images/case-study-M.png)
 
-
-Figure SSMSE-steps. Schematic illustrating the steps within the `run_SSMSE()` function. Note for simplicity, this diagram only shows steps for a single iteration, even though multiple scenarios could be called through `run_SSMSE()`.
-
-
-![alt_text](images/image4.png "image_tooltip")
-
-
-Figure SSMSE-workflow. Diagram illustrating a basic workflow for using SSMSE. This diagram shows the functions (ovals) in addition to input and output objects (rounded rectangles) and the steps for which users will write their own code (rectangle enclosed by dashed line).
-
-
-![alt_text](images/image5.png "image_tooltip")
-
-
-Figure case-study-M. Natural mortality patterns in the OMs through the simulation years (years 101-150).
-
-
-![alt_text](images/image6.png "image_tooltip")
-
-
-Figure case-study-violin. Example output plot that could be created from SSMSE output. Each violin represents the distribution of long-term average catch from a different scenario. Colors of the violins correspond to which management strategy was used in the scenario. The horizontal lines within each violin represent the median.
+![Example output plot that could be created from SSMSE output. Each violin represents the distribution of long-term average catch from a different scenario. Colors of the violins correspond to which management strategy was used in the scenario. The horizontal lines within each violin represent the median. \label{fig:case-study-violin}](images/case-study-violin.png)
