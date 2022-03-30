@@ -133,7 +133,7 @@ and employs other R dependencies developed for use with SS3 [e.g., ss3sim,
 @andersonetal2014; r4ss, @tayloretal2021].
 
 Users only need a few functions to run an analysis using the SSMSE package
-(Table 1) \autoref{fig:SSMSE-workflow}. The `run_SSMSE()` wrapper function runs
+([Table 1](#table1); \autoref{fig:SSMSE-workflow}). The `run_SSMSE()` wrapper function runs
 the SSMSE simulations (\autoref{fig:SSMSE-steps}). Inputs to `run_SSMSE()`
 include the names and locations of the conditioned ss3 models to use as
 operating models (`OM_name_vec` and `OM_in_dir_vec`), the type of management
@@ -214,7 +214,7 @@ populations, natural mortality likely varies in magnitude over time [e.g.,
 In this case study, we used SSMSE to investigate the effects on management
 objectives related to catch and population size of not accounting for natural
 mortality spikes in the estimation model informing management (i.e., stock
-assessment model; Table 2). Natural mortality spikes could occur due to periodic
+assessment model; [Table 2](#table2)). Natural mortality spikes could occur due to periodic
 changes in environmental conditions that can kill fish, such as red tide
 [@steidinger2009] or upwelling-driven hypoxia [@chanetal2008]. We assessed the
 performance of two distinct management strategies. We used a cod-like species as
@@ -343,7 +343,7 @@ through a NOAA Magnuson Stevens Act development grant.
 
 # Tables
 
-Table 1. Functions that users can call in SSMSE.
+<a name="table1">Table 1. Functions that users can call in SSMSE.</a>
 
 Function               | Description
 ---------------------- | ------------------
@@ -359,7 +359,7 @@ Function               | Description
 `plot_index_sampling()` | Plot to compare the sampled index values to the OM expected values and original OM conditioning index data.
 `plot_comp_sampling()`  | Plot to compare the sampled composition values to the OM expected values and original OM conditioning composition data.
 
-Table 2. Details about the steps in the case study.
+<a name="table2">Table 2. Details about the steps in the case study.</a>
 
 Step | Details | Differences across scenarios? | Differences across iterations within a scenario? 
 ---------------------- | ------------------ |---------------------- | ------------------
