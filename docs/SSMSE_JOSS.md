@@ -27,7 +27,7 @@ authors:
     affiliation: 3
   - name: Nancie J. Cummings
     affiliation: 3
-  - name: Kelli Johnson
+  - name: Kelli F. Johnson
     orcid: 0000-0002-5149-451X
     affiliation: 6
   - name: Kristin Marshall
@@ -35,10 +35,10 @@ authors:
   - name: Cassidy D. Peterson
     orcid: 0000-0002-0836-3039
     affiliation: 7
-  - name: Ian Taylor
+  - name: Ian G. Taylor
     orcid: 0000-0002-4232-5669
     affiliation: 6
-  - name: Chantel Wetzel
+  - name: Chantel R. Wetzel
     affiliation: 6
 
 affiliations:
