@@ -42,7 +42,10 @@ vignettes/*.pdf
 # output too big to store
 input_models/
 model_runs/**
+run_SSMSE-ex/**
 !model_runs/*.csv
 # remove the SSMSE summary files, because these can be too large.
 model_runs/SSMSE*.csv 
+*.zip
+
 
