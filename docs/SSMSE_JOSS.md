@@ -65,7 +65,7 @@ bibliography: SSMSE_JOSS.bib
 Management Strategy Evaluation (MSE) is a decision-support tool for fisheries
 management. MSE uses closed-loop simulation to evaluate the long-term
 performance of management strategies with respect to societal goals like
-sustainability and profits [@smith1994; @punt2014\; \autoref{fig:MSE-diagram}].
+sustainability and profits [@smith1994; @punt2014 \; \autoref{fig:MSE-diagram}].
 Management strategies are pre-defined decision rules that dynamically adjust
 management advice given an estimate of population status. In addition to
 specifying management actions, management strategies may include the processes
@@ -132,7 +132,7 @@ that analysts write to conduct novel MSEs. SSMSE is available as an R package
 and employs other R dependencies developed for use with SS3 [e.g., ss3sim,
 @andersonetal2014; r4ss, @tayloretal2021].
 
-Users only need a few functions to run an analysis using the SSMSE package
+Users only need a few functions to run an analysis using SSMSE
 (Table 1; \autoref{fig:SSMSE-workflow}). The `run_SSMSE()` wrapper function runs
 the SSMSE simulations (\autoref{fig:SSMSE-steps}). Inputs to `run_SSMSE()`
 include the names and locations of the conditioned SS3 models to use as
@@ -156,7 +156,7 @@ and plots based on the summaries.
 Five types of uncertainty that are typically captured in MSEs are process
 uncertainty, parameter uncertainty, model uncertainty, errors in assessments,
 and implementation uncertainty [@punt2014]. These can all be implemented using
-the SSMSE package:
+SSMSE:
 
 
 
@@ -170,10 +170,9 @@ the SSMSE package:
    parameter values to partially automate this process.
 3. Model uncertainty includes relationships within the operating model that may
    not be specified correctly (e.g., uncertainty about which stock-recruitment
-   relationship form is correct). The user could create multiple operating
-   models (e.g., ones using two unique stock-recruitment relationship forms) to
-   use in different scenarios to capture this uncertainty when running
-   simulations in SSMSE.
+   relationship form is correct). To capture model uncertainty using SSMSE, the
+   user could create multiple operating models (e.g., ones using two unique
+   stock-recruitment relationship forms) to use in different scenarios.
 4. Errors in assessments include specifying incorrect fixed parameter values or
    functional model structures in the estimation model and observational noise
    in data resulting in poor estimation of model parameter values. Users can
@@ -204,25 +203,24 @@ remotes::install_github(“nmfs-fish-tools/SSMSE”)
 
 Natural mortality (i.e., mortality not due to fishing) is a key life history
 characteristic that can have large effects on both population estimates and
-management benchmarks [e.g., @martyetal2003; @maceetal2021]. Natural mortality
+management benchmarks [e.g., @maceetal2021; @martyetal2003]. Natural mortality
 is often assumed constant in population dynamics models because collecting
 informative data to estimate natural mortality is difficult. However, for many
 populations, natural mortality likely varies in magnitude over time [e.g.,
 @krauseetal2020; @regularetal2022; @plaganyietal2022]. 
 
-In this case study, we used SSMSE to investigate the effects on management
-objectives of not accounting for natural
-mortality spikes in the estimation model informing management (i.e., stock
-assessment model; Table 2).  The management objectives explored related to catch and population size. Natural mortality spikes could occur due to periodic
-changes in environmental conditions that can kill fish, such as red tide
-[@steidinger2009] or upwelling-driven hypoxia [@chanetal2008]. We assessed the
-performance of two distinct management strategies. We used a cod-like species as
-the population and one fishing fleet and one survey in both the operating and
-estimation models.
+In this case study, we used SSMSE to investigate the effects of not accounting
+for episodic natural mortality spikes in the estimation model (i.e., stock assessment
+model; Table 2) on management objectives related to catch and population size.
+Natural mortality spikes could occur due to periodic changes in environmental
+conditions that can kill fish, such as red tide [@steidinger2009] or
+upwelling-driven hypoxia [@chanetal2008]. We assessed the performance of two
+distinct management strategies. We used a cod-like species as the population and
+one fishing fleet and one survey in both the operating and estimation models.
 
 Because the pattern of natural mortality is uncertain, we built three OMs, each
 reflecting a different hypothesis of the “true” natural mortality dynamics of
-the stock: 1) constant instantaneous natural mortality at 0.2 $yr^{-1}$;
+the stock: 1) constant instantaneous natural mortality at 0.2 $yr^{-1}$ (per year);
 2) natural mortality at 0.2 $yr^{-1}$ with a spike in natural mortality of
 0.3 $yr^{-1}$ every 5 years; and 3) natural mortality at 0.2
 $yr^{-1}$ with a spike in natural mortality of 0.4 $yr^{-1}$ every 5
@@ -248,24 +246,24 @@ assessment), and the SS3 forecast file associated with the estimation model to
 estimate management benchmarks and set future catches consistent with the
 harvest controls specified by the user in the estimation model forecast file.
 Two management strategies with alternative target harvest rates corresponding to
-a Spawning Potential Ratio (SPR) of 30% or 45% ($SPR_30$ and
-$SPR_45$, respectively) were used. The estimation model assumed constant
+a Spawning Potential Ratio (SPR) of 30% or 45% ($SPR_{30}$ and
+$SPR_{45}$, respectively) were used. The estimation model assumed constant
 natural mortality of 0.2 $yr^{-1}$ (i.e., matching true base natural
-mortality but not accounting for spikes in natural mortality included in some OMs). 
+mortality but not accounting for episodic spikes in natural mortality included in some OMs). 
 
 The forecasting module of the SS3 estimation model estimated the management
-benchmarks corresponding to $SPR_30$ or $SPR_45$. SPR is defined
+benchmarks corresponding to $SPR_{30}$ or $SPR_{45}$. SPR is defined
 as the fraction of the fished spawning stock biomass per recruit relative to the
-unfished spawning biomass per recruit [@goodyear1993]. For example, a harvest rate corresponding to $SPR_30$ would lead to 30% of unfished spawning biomass per recruit (higher harvest rate), while the lower harvest rate associated with
-$SPR_45$ would leave 45% of unfished spawning biomass per recruit (lower harvest
-rate). The $SPR_30$ and $SPR_45$ management strategies
+unfished spawning biomass per recruit [@goodyear1993]. For example, a harvest rate corresponding to $SPR_{30}$ would lead to 30% of unfished spawning biomass per recruit (higher harvest rate), while the lower harvest rate associated with
+$SPR_{45}$ would leave 45% of unfished spawning biomass per recruit (lower harvest
+rate). The $SPR_{30}$ and $SPR_{45}$ management strategies
 demonstrate potential tradeoffs associated with managing with less precaution by
-allowing more fishing in the short term ($SPR_30$) or by managing with
-more precaution by allowing less fishing in the short term ($SPR_45$).
+allowing more fishing in the short term ($SPR_{30}$) or by managing with
+more precaution by allowing less fishing in the short term ($SPR_{45}$).
 The assessment and associated management action happened every 5 years in all
 scenarios, so the SS3 forecast module for each scenario also generated
 projections of five years of catch at the fishing mortality rate corresponding
-to $SPR_45$ or $SPR_30$. The five years of catch was then
+to $SPR_{45}$ or $SPR_{30}$. The five years of catch was then
 removed from the simulated population in the OM as each OM was projected forward
 in time until the next management strategy time step (in this case study, every 5 years). The simulations applied a management
 period of 50 years into the future. 
@@ -288,11 +286,11 @@ had a high maximum gradient (>2), or had parameters on bounds. This resulted in
 a maximum of six iterations (6%) excluded from any scenario.
 
 We found that managing the stock with more precaution in the face of episodic
-mortality resulted in both higher long-term catch and less variability in catch
-(\autoref{fig:case-study-violin}). However, managing the stock with more
-precaution comes at the cost of less short-term catch. These results were true
-regardless if natural mortality was correctly captured within the management
-strategy or not.
+natural mortality spikes resulted in both higher long-term catch and less
+variability in catch (\autoref{fig:case-study-violin}). However, managing the
+stock with more precaution comes at the cost of less short-term catch. These
+results were true regardless if natural mortality was correctly captured within
+the management strategy or not.
 
 Within the same management strategy, scenarios with higher spikes of natural
 mortality that were unaccounted for had slightly lower average catch, slightly
@@ -305,14 +303,13 @@ larger difference in performance.
 
 The result that managing with more precaution results in higher long-term yields
 and less variability in yields is not surprising given that the level of
-spawning biomass that results in maximum sustainable yield is
-closer to $SPR_45$ than to $SPR_30$ for this population. Harford
-et al. (2018) used a custom-built MSE and found that managing with more
-precaution in the face of episodic mortality resulted in lower probabilities of
-overfishing and being overfished, but at the expense of lower catches. Here with
-only a few lines of code, SSMSE demonstrates similar findings, providing a
-powerful tool for rapidly conducting MSEs from existing SS3 stock assessment
-applications.
+spawning biomass that results in maximum sustainable yield is closer to
+$SPR_{45}$ than to $SPR_{30}$ for this population. Harford et al. (2018) used a
+custom-built MSE and found that managing with more precaution in the face of
+episodic natural mortality spikes resulted in lower probabilities of overfishing
+and being overfished, but at the expense of lower catches. Here with only a few
+lines of code, SSMSE demonstrates similar findings, providing a powerful tool
+for rapidly conducting MSEs from existing SS3 stock assessment applications.
 
 
 # Summary
@@ -320,7 +317,7 @@ applications.
 SSMSE is a generalizable tool for stock assessment scientists and MSE
 practitioners. It allows SS3 models to be used directly as OMs (and optionally
 as estimation models) within MSEs. We expect that SSMSE will greatly advance the
-capacity to conduct MSE. As SS3 is one of the most widely used stock assessment
+capacity to conduct MSEs. As SS3 is one of the most widely used stock assessment
 platforms, adding MSE capacity means that any existing SS3 model could be the
 basis for MSE simulations with less effort and code. This will allow
 practitioners to more readily evaluate a wide range of research questions and
@@ -331,7 +328,7 @@ potential management actions.
 
 Thanks to Desiree Tommasi for testing SSMSE and providing comments that greatly improved
 this manuscript; Robert Wildermuth and Peter Kuriyama for their extensive
-testing of the SSMSE package; Matthew Damiano, Allan Hicks, and Huihua Lee for
+testing of SSMSE; Matthew Damiano, Allan Hicks, and Huihua Lee for
 early discussions regarding MSE and the development of SSMSE; and Corrine Bassin
 and Christine Stawitz for their support in setting up the repository and
 documentation. KD and NV acknowledge funding for this project was provided
@@ -347,13 +344,13 @@ Function               | Description
 `run_SSMSE()`            | Run the MSE simulations
 `SSMSE_summary_all()`    | Summarize MSE output
 `create_sample_struct()`  | Helper function to create a list for future sampling from a model to use as input in `run_SSMSE()`
-`create_future_om_list()` | Helper function that provides examples of the structure for the `future_om_list` input to `run_SSMSE()`.
+`create_future_om_list()` | Helper function that provides examples of the structure for the `future_om_list` input to `run_SSMSE()`
 `develop_OMs()`           | Helper function to turn one OM into many
 `run_EM()`       |  Run an SS3 estimation model (uses run_ss_model)
 `run_ss_model()` | Run an SS3 model
-`get_bin()`      | Get location of the SS3 binary.
+`get_bin()`      | Get location of the SS3 binary
 `parse_MS()`     | Run the management strategy and get catch by fleet for the projections. A function to reference for setting up custom management strategies. 
-`plot_index_sampling()` | Create diagnostic plot to compare the sampled index values to the OM expected values and original OM conditioning index data.
+`plot_index_sampling()` | Create diagnostic plot to compare the sampled index values to the OM expected values and original OM conditioning index data
 `plot_comp_sampling()`  | Create diagnostic plot to compare the sampled composition values to the OM expected values and original OM conditioning composition data.
 
 Table 2. Details about the steps in the case study. See \autoref{fig:SSMSE-steps} for a general schematic of steps.
@@ -363,7 +360,7 @@ General step | Details for case study | Differences across scenarios? | Differen
 Create OM | Use OMs that differ in their assumed natural mortality values across scenarios; recruitment deviations and fishery selectivity pattern differ across iterations within scenarios | Yes | Yes 
 Sample data from OM | Use sampling scheme: survey index and age composition every 5 years, length composition from the fishery every 5 years. Use same sample size as in the original model the OM is derived from | No | No
 Run estimation method | Use SS3 estimation models | No | No
-Use management actions to project $n$ years of catch | Use the forecast modules from the SS3 models to project catch 5 years, managing either for $SPR_30$ or $SPR_45$ | Yes | No
+Use management actions to project $n$ years of catch | Use the forecast modules from the SS3 models to project catch 5 years, managing either for $SPR_{30}$ or $SPR_{45}$ | Yes | No
 Update OM with $n$ years of catch | $n = 5$ | No | No
 Sample $n$ years of data | $n = 5$ | No | No
 
