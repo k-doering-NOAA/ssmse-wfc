@@ -75,10 +75,10 @@ population) [@sainsburyetal2000].
 Within MSE simulations, operating models (OMs) represent the “true” dynamics and
 relevant complexity of the system. Multiple OMs are typically generated for a
 single MSE to reflect different uncertainties and assess management performance
-under uncertainty. Developing suitable OMs requires an analyst to define, at a
-minimum: 1) the life history characteristics of the population; 2) the fishing
-effort and selectivity of all fisheries affecting the population; 3) the spatial
-distribution of the population; and 4) any critical environmental covariates or
+under uncertainty. Developing suitable OMs requires an analyst to, at a
+minimum, define: the life history characteristics of the population and the fishing
+effort and selectivity of all fisheries affecting the population; and consider: the spatial
+distribution of the population and any critical environmental covariates or
 species interactions. OMs should be calibrated (or “conditioned”) on available
 data to ensure that model protjections are consistent with historical
 observations [@punt2014]. Due to the many considerations, developing
@@ -160,7 +160,9 @@ SSMSE:
 
 
 
-1. Process uncertainty can be captured by using the `future_om_list` input to
+1. Process uncertainty  can be accounted for by including variation in parameters 
+   in the OMs for parameters that are typically treated as fixed in stock assessments.
+   Process uncertainty can be captured by using the `future_om_list` input to
    `run_SSMSE()`. This input allows users to specify time-varying trends and
    deviations in recruitment and other model parameter values during the
    simulation period.
@@ -173,12 +175,13 @@ SSMSE:
    relationship form is correct). To capture model uncertainty using SSMSE, the
    user could create multiple operating models (e.g., ones using two unique
    stock-recruitment relationship forms) to use in different scenarios.
-4. Errors in assessments include specifying incorrect fixed parameter values or
+4. Errors in assessments as defined here include specifying incorrect fixed parameter values or
    functional model structures in the estimation model and observational noise
-   in data resulting in poor estimation of model parameter values. Users can
+   in data resulting in poor estimation of model parameter values (even if the 
+   assessment is correctly specified outside of those estimated parameters). Users can
    adjust errors in assessments by specifying different fixed values and
    structures in different scenarios and by changing the sampling scheme through
-   the `sample_struct_list` input to `run_SSMSE()` to adjust obserservation
+   the `sample_struct_list` input to `run_SSMSE()` to adjust observation
    uncertainty.
 5. Implementation uncertainty happens because it is difficult to perfectly
    implement a theoretical management strategy. For example, fishing may
@@ -205,9 +208,9 @@ Natural mortality (i.e., mortality not due to fishing) is a key life history
 characteristic that can have large effects on both population estimates and
 management benchmarks [e.g., @maceetal2021; @martyetal2003]. Natural mortality
 is often assumed constant in population dynamics models because collecting
-informative data to estimate natural mortality is difficult. However, for many
-populations, natural mortality likely varies in magnitude over time [e.g.,
-@krauseetal2020; @regularetal2022; @plaganyietal2022]. 
+informative data to estimate time-varying and/or age-varying natural mortality
+is difficult. However, for many populations, natural mortality likely varies in
+magnitude over time [e.g., @krauseetal2020; @regularetal2022; @plaganyietal2022]. 
 
 In this case study, we used SSMSE to investigate the effects of not accounting
 for episodic natural mortality spikes in the estimation model (i.e., stock assessment
@@ -231,7 +234,7 @@ addition, annual recruitment deviations were assumed to vary randomly from year
 to year. Selectivity and recruitment likely vary over time
 [@sampsonandscott2011; @maunderandthorson2019], so allowing random deviations
 was considered a more realistic characterization of uncertainty among
-iterations. To ensure differences in performance were due to the management
+iterations. To ensure differences in performance are due to the management
 strategy rather than from the use of different randomly selected selectivity
 parameter values and recruitment deviations, SSMSE allows for the same sets of
 random values to be used for each scenario by setting a seed in the
@@ -270,9 +273,9 @@ period of 50 years into the future.
 
 Performance metrics quantify the goals of the management system and are used to
 measure the relative performance of each management strategy within the MSE. To
-quantify performance in the long-term, point estimates of catch, standard
+quantify performance in the long-term, point estimates of catch by year, standard
 deviation of catch across years, and the spawning biomass (a measure
-of population size) were extracted from the last 25 years of the simulations and
+of population size) by year were extracted from the last 25 years of the simulations and
 averaged for each iteration across years, then plotted by scenario. In addition,
 to understand the short term effects on fishing, short-term catch was calculated
 by extracting point estimates of catch from the first 10 years of the
@@ -290,7 +293,7 @@ natural mortality spikes resulted in both higher long-term catch and less
 variability in catch (\autoref{fig:case-study-violin}). However, managing the
 stock with more precaution comes at the cost of less short-term catch. These
 results were true regardless if natural mortality was correctly captured within
-the management strategy or not.
+the management strategy (within the estimation model) or not.
 
 Within the same management strategy, scenarios with higher spikes of natural
 mortality that were unaccounted for had slightly lower average catch, slightly
@@ -304,12 +307,14 @@ larger difference in performance.
 The result that managing with more precaution results in higher long-term yields
 and less variability in yields is not surprising given that the level of
 spawning biomass that results in maximum sustainable yield is closer to
-$SPR_{45}$ than to $SPR_{30}$ for this population. Harford et al. (2018) used a
-custom-built MSE and found that managing with more precaution in the face of
-episodic natural mortality spikes resulted in lower probabilities of overfishing
-and being overfished, but at the expense of lower catches. Here with only a few
-lines of code, SSMSE demonstrates similar findings, providing a powerful tool
-for rapidly conducting MSEs from existing SS3 stock assessment applications.
+$SPR_{45}$ than to $SPR_{30}$ for these populations ($SSB_{MSY}$ was the same 
+regardless if there were episodic spkes of natural mortality or not in the OMs). 
+Harford et al. (2018) used a custom-built MSE and found that managing with more 
+precaution in the face of episodic natural mortality spikes resulted in lower 
+probabilities of overfishing and being overfished, but at the expense of lower 
+catches. Here with only a few lines of code, SSMSE demonstrates similar findings,
+providing a powerful tool for rapidly conducting MSEs from existing SS3 stock 
+assessment applications.
 
 
 # Summary
